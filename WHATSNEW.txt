@@ -1,0 +1,7 @@
+WHAT'S NEW IN VERSION
+1.5.4 Oct 2021 -
+* Density matrices with parity projection now fixed 
+
+1.5.3 Oct 2021  
+* Fixed error in parity projection created in version 1.5.0
+

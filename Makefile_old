@@ -1,0 +1,170 @@
+#CFLAGS   = -O2 -w
+#CFLAGS	 = -O2  # -g -fbounds-check -fbacktrace
+#CFLAGS = -g -fbounds-check -Wall -fbacktrace -finit-real=nan
+CFLAGS= -O2  #-fbounds-check
+OMPFLAG_gfortran="-fopenmp" # -fbounds-check"
+OMPFLAG_ifort= -openmp
+LFLAGSLAPACK= " -llapack -lblas" 
+DPLIBS   =
+COMPILER77= gfortran
+COMPILER90= gfortran
+F90=gfortran
+F77=gfortran
+MPI90_COMPILER=mpif90
+MPI77_COMPILER=mpif90
+LFLAGS= # -fbounds-check
+#COMPILER77 = ifort
+#COMPILER90 = ifort
+
+HF_OBJECTS =  \
+LAMP_modulesParallel.o \
+LAMPsplib.o \
+LAMPpsilib.o \
+LAMP_interact.o \
+LAMP_hamlib.o \
+LAMPwignerlib.o \
+LAMPmisclib.o \
+LAMPutils.o \
+LAMPdens1b.o\
+LAMPeigen.o \
+LAMPoutput.o \
+libra.o  \
+LAMPdenslib.o \
+LAMPapplyh.o \
+LAMPsampler.o \
+LAMPprojectdens1b.o \
+LAMPmanagelib.o \
+LAMPboss.o \
+complex_inverse.o
+
+LAPACK_OBJECTS = \
+phflib.o 
+#zgesv.o \
+
+LITTLE_OBJECTS = \
+lilmodules.o \
+lileigen.o \
+lilLAMP.o 
+
+%.o : %.f90
+	$(F90) $(CFLAGS) $(OMPFLAG_gfortran) -c $(<F)  
+
+%.o : %.f
+	$(F77) $(CFLAGS) $(OMPFLAG_gfortran) -c $(<F)
+
+#.f.o:;  (cd $(<D); $(COMPILER) -c  $(CFLAGS) $(<F))
+	
+
+default: $(HF_OBJECTS) $(LAPACK_COMPILE) $(MPI_OBJECTS)
+	$(F90) -o ${EX} $(HF_OBJECTS) $(LFLAGS) $(OMPFLAG_gfortran) $(MPI_OBJECTS) $(LAPACK) $(DPLIBS) $(LIBS) -llapack -lblas
+
+lamp:
+	cp mpif.h.template mpif.h
+	$(MAKE) F90=$(COMPILER90) F77=$(COMPILER77) OMPFLAGS=$(OMPFLAG_gfortran) MPI_OBJECTS=dummy_MPI_libs.o LAPACK_COMPILE=$(LAPACK_OBJECTS) LAPACK=$(LAPACK_OBJECTS) $(OPTIONS) EX=lamp154s.x
+	@echo Executable is lamp154s.x 
+	rm mpif.h 
+
+phf : 
+	$(MAKE) F90=$(COMPILER90) F77=$(COMPILER77) OMPFLAGS=$(OMPFLAG_gfortran)  LAPACK_COMPILE=$(LAPACK_OBJECTS) LAPACK=$(LAPACK_OBJECTS)
+
+phf-lapack : 
+	$(MAKE) F90=$(COMPILER90) F77=$(COMPILER77) OMPFLAGS=$(OMPFLAG_gfortran) LAPACK=$(LFLAGSLAPACK) 
+
+lamp-mpi: 
+	$(MAKE) F90=$(MPI90_COMPILER) F77=$(MPI77_COMPILER) OMPFLAGS=$(OMPFLAG_gfortran) LAPACK_COMPILE=$(LAPACK_OBJECTS) LAPACK=$(LAPACK_OBJECTS) $(OPTIONS) EX=lamp-mpi.x
+
+little: 
+	gfortran -o lillamp.x  lilmodules.f90 lilden1b.f90 lileigen.f90  lilLAMP.f90 -llapack
+
+	
+clean :
+	rm -v *.o *.mod *.x
+	
+help:
+	@echo ' Compile options'
+	@echo ' make phf-lapack   (default: uses libraries to lapack, blas)'
+	@echo ' make phf (uses my own packages for lapack, produces same executable)'	
+	@echo ' make little   create lillamp.x for expectation values'
+	@echo ' make clean    removes .mod, .o, .x files'
+
+
+---- OLD 
+#CFLAGS   = -O2 -w
+#CFLAGS	 = -O2  # -g -fbounds-check -fbacktrace
+#CFLAGS = -g -fbounds-check -Wall -fbacktrace -finit-real=nan
+CFLAGS= -O2 #-fbounds-check
+OMPFLAG_gfortran="-fopenmp" # -fbounds-check"
+OMPFLAG_ifort= -openmp
+LFLAGSLAPACK= " -llapack -lblas" 
+DPLIBS   =
+COMPILER77= gfortran
+COMPILER90= gfortran
+MPI90_COMPILER=mpif90
+MPI77_COMPILER=mpif90
+LFLAGS= #-fbounds-check
+#COMPILER77 = ifort
+#COMPILER90 = ifort
+
+HF_OBJECTS =  \
+LAMPsplib.o \
+LAMPpsilib.o \
+LAMP_interact.o \
+LAMP_hamlib.o \
+LAMPwignerlib.o \
+LAMPmisclib.o \
+LAMPutils.o \
+LAMPdens1b.o\
+LAMPeigen.o \
+LAMPoutput.o \
+libra.o  \
+LAMPdenslib.o \
+LAMPapplyh.o \
+LAMPsampler.o \
+LAMPprojectdens1b.o \
+LAMPmanagelib.o \
+LAMPboss.o \
+complex_inverse.o
+
+LAPACK_OBJECTS = \
+phflib.o 
+#zgesv.o \
+
+LITTLE_OBJECTS = \
+lilmodules.o \
+lileigen.o \
+lilLAMP.o 
+
+%.o : %.f90
+	$(F90) $(CFLAGS) $(OMPFLAGS) -c $(<F)  
+
+%.o : %.f
+	$(F77) $(CFLAGS) $(OMPFLAGS) -c $(<F)
+
+#.f.o:;  (cd $(<D); $(COMPILER) -c  $(CFLAGS) $(<F))
+	
+
+default: $(HF_OBJECTS) $(LAPACK_COMPILE)
+	$(F90) -o lamp.x $(HF_OBJECTS) $(LFLAGS) $(OMPFLAGS) $(LAPACK) $(DPLIBS) $(LIBS)
+
+phf : 
+	$(MAKE) F90=$(COMPILER90) F77=$(COMPILER77) OMPFLAGS=$(OMPFLAG_gfortran)  LAPACK_COMPILE=$(LAPACK_OBJECTS) LAPACK=$(LAPACK_OBJECTS)
+
+phf-lapack : 
+	$(MAKE) F90=$(COMPILER90) F77=$(COMPILER77) OMPFLAGS=$(OMPFLAG_gfortran) LAPACK=$(LFLAGSLAPACK) 
+
+lamp-mpi: 
+	$(MAKE) F90=$(MPI90_COMPILER) F77=$(MPI77_COMPILER) OMPFLAGS=$(OMPFLAG_ifort) LAPACK_COMPILE=$(LAPACK_OBJECTS) LAPACK=$(LAPACK_OBJECTS)
+
+little: 
+	gfortran -o lillamp.x  lilmodules.f90 lilden1b.f90 lileigen.f90  lilLAMP.f90 -llapack
+
+	
+clean :
+	rm -v *.o *.mod *.x
+	
+help:
+	@echo ' Compile options'
+	@echo ' make phf   (default: uses libraries to lapack, blas)'
+	@echo ' make phf-lapack (uses my own packages, produces same executable)'	
+	@echo ' make little   create lillamp.x for expectation values'
+	@echo ' make clean    removes .mod, .o, .x files'

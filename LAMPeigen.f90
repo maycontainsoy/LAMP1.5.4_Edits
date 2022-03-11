@@ -253,7 +253,9 @@ end if
 				end if
 			end if
         end do
-        if (nkeep<1) write(*,*)' No states for J = ',floatJ
+        IF (myMPIrank == root) THEN 
+					if (nkeep<1) write(*,*)' No states for J = ',floatJ
+				END IF ! myMPIrank == root
 
         deallocate(ParityEvals,normvals,TSDHmat,TSDNmat)
 		if(compute_expect)deallocate(obsSDHmat,obsvals)

@@ -32,7 +32,7 @@ subroutine basic_sampling
 	integer :: ilist,numEuler 
 	complex (KIND = 8), ALLOCATABLE ::  parOp(:,:)  ! matrix for making parity transformation
 	
-	COMPLEX (KIND = 8), allocatable :: RotMat(:,:)
+	COMPLEX (KIND = 8),allocatable :: RotMat(:,:)
 	COMPLEX (KIND = 8),ALLOCATABLE :: psdr(:,:),nsdr(:,:),psdpr(:,:),nsdpr(:,:) 
 	COMPLEX (KIND = 8),ALLOCATABLE :: rhopij(:,:),rhonij(:,:)
 	COMPLEX (KIND = 8) :: ovlpp,ovlpn
@@ -145,7 +145,7 @@ subroutine basic_sampling
 					CALL TBMEmaster(nsps,rhopij,rhonij,ovlpp,ovlpn,vme)	! in LAMPapplyh.f90
 					H_ijk(fsd,isd,ialp,jbet,kgam) = vme
 !					print*,vme
-					PRINT*, ' Node = ', myMPIrank, ' end of TBMEmaster (in sampler)'
+					!PRINT*, ' Node = ', myMPIrank, ' end of TBMEmaster (in sampler)'
 				end if
 !.................... IF WE PROJECT PARITY.....
 				if(.not.allsameparity)then
@@ -189,7 +189,7 @@ subroutine basic_sampling
 		end do ! isd
 	end do ! ilist
 
-	PRINT*, ' Node = ', myMPIrank, ' end of basic_sampling'
+	!PRINT*, ' Node = ', myMPIrank, ' end of basic_sampling'
 	
 	deallocate(alpha_list,beta_list,gamma_list)
 	return

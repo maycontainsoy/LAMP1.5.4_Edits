@@ -133,9 +133,9 @@ CASE('e','E') ! menu_char
 	CALL hmultMPIdistro
 	!PRINT*, ' Node = ', myMPIrank, ' after deallocator'
 	CALL projectorator 
-	PRINT*, ' Node = ', myMPIrank, ' after projectorator'
+	!PRINT*, ' Node = ', myMPIrank, ' after projectorator'
 	CALL tracemaster 
-	PRINT*, ' Node = ', myMPIrank, ' after tracemaster'
+	!PRINT*, ' Node = ', myMPIrank, ' after tracemaster'
 
 	IF (ychar == 'y' .OR. ychar == 'Y') THEN 
 		CALL printNorm(6)
@@ -187,9 +187,11 @@ CASE('e','E') ! menu_char
 		compute_expect = .TRUE. 
 		CALL read_matfromfile 
 	CASE DEFAULT 
-		PRINT*, '' 
-		PRINT*, ' Computing energies and eigenvectors'
-		PRINT*, ''
+		IF (myMPIrank == root) THEN 
+			PRINT*, '' 
+			PRINT*, ' Computing energies and eigenvectors'
+			PRINT*, ''
+		END IF ! myMPIrank == root 
 
 		compute_expect = .FALSE. 
 	END SELECT ! eval_char
@@ -203,24 +205,39 @@ CASE('e','E') ! menu_char
 	nlevelmax = nlevelmax * numsd 
 	ALLOCATE(jall(nlevelmax),pallPair(2,nlevelmax),obsall(2,nlevelmax))
 	ALLOCATE(problist(2,numOfJ),hamlist(2,numOfJ))
-	PRINT*, ' How many energies to print to screen? (all will be written to file)'
-	READ*, nprint 
+	
+	IF (myMPIrank == root) THEN 
+		PRINT*, ' How many energies to print to screen? (all will be written to file)'
+		READ*, nprint 
+	END IF ! myMPIrank == root 
+	CALL MPI_BARRIER(icomm,ierr)
+	CALL MPI_BCAST(nprint,1,MPI_INT,root,icomm,ierr)
 
 !.... ADDED IN 1.4.2: ABILITY TO DO CHANGES IN TOLERANCE 
 	ychar = 'y' 
-	CALL inputTolerance(tolerance)
+	IF (myMPIrank == root) THEN 
+		CALL inputTolerance(tolerance)
+	END IF ! myMPIrank 
+	CALL MPI_BARRIER(icomm,ierr)
+	CALL MPI_BCAST(tolerance,1,MPI_REAL,root,icomm,ierr)
+
 	jtarget = -1. 
 	numsdused = numsd 
 	DO WHILE (ychar == 'y' .OR. ychar == 'Y')
 		CALL EigenSolverPackage(tolerance, nlevelmax, numsdused, nftotal, jall, pallPair, obsall, normSum, hamSum, problist, hamlist)
 		PRINT*, '' 
-		PRINT*, ' Sum of norms = ', DBLE(normSum)
-		PRINT*, ' Sum of trace(H) = ', DBLE(hamSum)
+		IF (myMPIrank == root) THEN 
+			PRINT*, ' Sum of norms = ', DBLE(normSum)
+			PRINT*, ' Sum of trace(H) = ', DBLE(hamSum)
 
-		CALL J_WriteResults(tolerance, nlevelmax, nftotal, jall, pallPair, obsall, problist, hamlist, .NOT.allsameparity, nprint)
-		PRINT*, ''
-		PRINT*, ' Do you want to run with other parameters (y/n)?'
-		READ(5,'(A)') ychar 
+			CALL J_WriteResults(tolerance, nlevelmax, nftotal, jall, pallPair, obsall, problist, hamlist, .NOT.allsameparity, nprint)
+			PRINT*, ''
+			PRINT*, ' Do you want to run with other parameters (y/n)?'
+			READ(5,'(A)') ychar 
+		END IF ! myMPIrank == root 
+		CALL MPI_BARRIER(icomm,ierr)
+		CALL MPI_BCAST(ychar,1,MPI_CHARACTER,root,icomm,ierr)
+
 		IF ( ychar == 'y' .OR. ychar == 'Y' ) THEN 
 			CALL inputTolerance(tolerance)
 			IF ( numsd > 1 ) THEN 
@@ -240,9 +257,11 @@ CASE('e','E') ! menu_char
 		END IF ! ychar 
 	END DO ! ychar 
 
-	WRITE(*,*) '    TIME of total LAMP calculation: ', clock_stop - clock_start, ' seconds'
-	WRITE(*,*) '    TIME of norm calculation: ', norm_stop - norm_start, ' seconds'
-	WRITE(*,*) '    TIME of ham calculation: ', ham_stop - ham_start, ' seconds'
+	IF (myMPIrank == root) THEN
+		WRITE(*,*) '    TIME of total LAMP calculation: ', clock_stop - clock_start, ' seconds'
+		WRITE(*,*) '    TIME of norm calculation: ', norm_stop - norm_start, ' seconds'
+		WRITE(*,*) '    TIME of ham calculation: ', ham_stop - ham_start, ' seconds'
+	END IF ! myMPIrank == root 
 
 CASE('d','D') ! menu_char
 	PRINT*, ' Must first find energies'

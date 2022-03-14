@@ -100,7 +100,9 @@ IF (myMPIrank == root) THEN
 	READ(5,'(A)') menu_char 
 END IF 
 
+CALL MPI_BARRIER(icomm,ierr)
 CALL MPI_BCAST(menu_char,1,MPI_CHARACTER,root,icomm,ierr)
+PRINT*, ' Node = ', myMPIrank, ' menu_char = ', menu_char 
 
 SELECT CASE(menu_char)
 CASE DEFAULT ! menu_char
@@ -157,6 +159,8 @@ CASE('e','E') ! menu_char
 	END IF ! myMPIrank == root 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(eval_char,1,MPI_CHARACTER,root,icomm,ierr)
+
+	PRINT*, ' Node = ', myMPIrank, ' eval_char = ', eval_char
 
 	SELECT CASE(eval_char)
 	CASE('w','W') ! eval_char
@@ -240,8 +244,10 @@ CASE('e','E') ! menu_char
 			PRINT*, ' Do you want to run with other parameters (y/n)?'
 			READ(5,'(A)') ychar 
 		END IF ! myMPIrank == root 
-		CALL MPI_BARRIER(icomm,ierr)
-		CALL MPI_BCAST(ychar,1,MPI_CHARACTER,root,icomm,ierr)
+		! CALL MPI_BARRIER(icomm,ierr)
+		! CALL MPI_BCAST(ychar,1,MPI_CHARACTER,root,icomm,ierr)
+
+		PRINT*, ' Node = ', myMPIrank, ' ychar = ', ychar
 
 		IF ( ychar == 'y' .OR. ychar == 'Y' ) THEN 
 			CALL inputTolerance(tolerance)

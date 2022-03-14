@@ -352,8 +352,9 @@ end if
 
 
 1000 FORMAT(I3,4(G15.8))
-
+PRINT*, ' Makes it here in LAMPoutput.f90 (~355)'
 WRITE(*,*) 'Write output to file? (Y or N)'
+PRINT*, ' Makes it here in LAMPoutput.f90 (~357)'
 
 DO
 	READ(*,*) choice

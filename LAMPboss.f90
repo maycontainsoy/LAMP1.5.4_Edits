@@ -221,16 +221,21 @@ CASE('e','E') ! menu_char
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(tolerance,1,MPI_REAL,root,icomm,ierr)
 
+	PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance
+
 	jtarget = -1. 
 	numsdused = numsd 
+	!--------------------------------------------------
+	! MIGHT NEED TO ROOT PROTECT THIS ENTIRE WHILE LOOP
+	!--------------------------------------------------
 	DO WHILE (ychar == 'y' .OR. ychar == 'Y')
-		CALL EigenSolverPackage(tolerance, nlevelmax, numsdused, nftotal, jall, pallPair, obsall, normSum, hamSum, problist, hamlist)
+		CALL EigenSolverPackage(tolerance, nlevelmax, numsdused, nftotal, jall, pallPair, obsall, normSum, hamSum, problist, hamlist)	! in LAMPeigen.f90 
 		PRINT*, '' 
 		IF (myMPIrank == root) THEN 
 			PRINT*, ' Sum of norms = ', DBLE(normSum)
 			PRINT*, ' Sum of trace(H) = ', DBLE(hamSum)
 
-			CALL J_WriteResults(tolerance, nlevelmax, nftotal, jall, pallPair, obsall, problist, hamlist, .NOT.allsameparity, nprint)
+			CALL J_WriteResults(tolerance, nlevelmax, nftotal, jall, pallPair, obsall, problist, hamlist, .NOT.allsameparity, nprint)		! in LAMPoutput.f90
 			PRINT*, ''
 			PRINT*, ' Do you want to run with other parameters (y/n)?'
 			READ(5,'(A)') ychar 

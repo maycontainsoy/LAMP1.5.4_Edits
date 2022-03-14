@@ -492,7 +492,7 @@ module hamlib
 			enddo ! loop over j
 		enddo    ! loop over i
 		nmatXX = imatxx
-		print*,' testing XX count ',nmatXX
+		! print*,' testing XX count ',nmatXX
 
 		return
 	end subroutine untbmeXXnew

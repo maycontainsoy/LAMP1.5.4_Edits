@@ -233,7 +233,11 @@ CASE('e','E') ! menu_char
 	! MIGHT NEED TO ROOT PROTECT THIS ENTIRE WHILE LOOP
 	!--------------------------------------------------
 	DO WHILE (ychar == 'y' .OR. ychar == 'Y')
+		PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance ! TESTING, REMOVE
+		PRINT*, ' Node = ', myMPIrank, ' nlevelmax = ', nlevelmax ! TESTING, REMOVE
+		PRINT*, ' Node = ', myMPIrank, ' numsdused = ', numsdused ! TESTING, REMOVE
 		CALL EigenSolverPackage(tolerance, nlevelmax, numsdused, nftotal, jall, pallPair, obsall, normSum, hamSum, problist, hamlist)	! in LAMPeigen.f90 
+		CALL MPI_BARRIER(icomm,ierr) ! TESTING, REMOVE
 		PRINT*, '' 
 		IF (myMPIrank == root) THEN 
 			PRINT*, ' Sum of norms = ', DBLE(normSum)
@@ -244,8 +248,8 @@ CASE('e','E') ! menu_char
 			PRINT*, ' Do you want to run with other parameters (y/n)?'
 			READ(5,'(A)') ychar 
 		END IF ! myMPIrank == root 
-		! CALL MPI_BARRIER(icomm,ierr)
-		! CALL MPI_BCAST(ychar,1,MPI_CHARACTER,root,icomm,ierr)
+		CALL MPI_BARRIER(icomm,ierr)
+		CALL MPI_BCAST(ychar,1,MPI_CHARACTER,root,icomm,ierr)
 
 		PRINT*, ' Node = ', myMPIrank, ' ychar = ', ychar
 

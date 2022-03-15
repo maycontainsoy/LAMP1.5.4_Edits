@@ -1,4 +1,5 @@
 module eigenpackage
+	USE nodeinfo
 
 	implicit none
 
@@ -50,49 +51,45 @@ contains
 !   nf = number of states found
 !
 subroutine EigenSolverPackage(tolerance,npmax, numsdused, nftotal,jfound,Efound,obsfound,normsum,hamsum,problist,hamlist)
-
-    use jaggedArrayType
+	use jaggedArrayType
 	use lamplight
 	use tracy
 	use psis,only: numsd
 	use dens1body
 
-    implicit none
+	implicit none
 
-    real (kind=4), intent(in) :: tolerance
-    integer (kind=8) :: npmax!!
+	real (kind=4), intent(in) :: tolerance
+	integer (kind=8) :: npmax!!
 	integer,intent(in) :: numsdused
 
 !............OUTPUT......................
-    integer (kind=8), intent(out) :: nftotal!!
-    real (kind=8), intent(inout) :: jfound(npmax), Efound(2,npmax),obsfound(2,npmax) !jall(npmax), pallPair(2,npmax)!!
-    real (kind = 8) :: normSum, hamSum
-    real (kind=8) :: problist(2,numOfJ), hamlist(2,numOfJ)!!
+	integer (kind=8), intent(out) :: nftotal!!
+	real (kind=8), intent(inout) :: jfound(npmax), Efound(2,npmax),obsfound(2,npmax) !jall(npmax), pallPair(2,npmax)!!
+	real (kind = 8) :: normSum, hamSum
+	real (kind=8) :: problist(2,numOfJ), hamlist(2,numOfJ)!!
 
 !............INTERNAL....................
-
-    integer (kind=4) :: intJ, kk,ll,ii,jj
-    real (kind=4) :: floatJ
-    real (kind=8), allocatable :: ParityEvals(:,:), normvals(:,:),obsvals(:,:)
-    integer (kind=4) :: parityOUT
-    complex(kind=8), allocatable, dimension(:,:) :: TSDHmat, TSDNmat, obsSDHmat
-    integer (kind=8) :: nf, nkeep
-    integer (kind=4) :: stateFound
+	integer (kind=4) :: intJ, kk,ll,ii,jj
+	real (kind=4) :: floatJ
+	real (kind=8), allocatable :: ParityEvals(:,:), normvals(:,:),obsvals(:,:)
+	integer (kind=4) :: parityOUT
+	complex(kind=8), allocatable, dimension(:,:) :: TSDHmat, TSDNmat, obsSDHmat
+	integer (kind=8) :: nf, nkeep
+	integer (kind=4) :: stateFound
 	complex(kind=8) :: localtrace
 	integer :: sdX,sdY  ! indices for muliple Slater Determinants
 	integer :: localdim,matdim  ,a,b
 	
 !................. ADDED IN 1.3.6.... allocate memory ....................
-
-    nlevels = 0
-    do intJ = 1, numOfJ
-		
-        floatJ = xJlist(intJ)
+	nlevels = 0
+	do intJ = 1, numOfJ
+		floatJ = xJlist(intJ)
 		nlevels = nlevels + 2*nint(floatJ)+1
 	end do
 	nlevels = nlevels*numsdused
 	if(.not.allsameparity)nlevels = 2*nlevels
-    if(.not. allocated(energylevels))allocate(energylevels(nlevels),jlevels(nlevels),paritylevels(nlevels),obslevels(nlevels))
+	if(.not. allocated(energylevels))allocate(energylevels(nlevels),jlevels(nlevels),paritylevels(nlevels),obslevels(nlevels))
 	
 	energylevels = 0.0
 	jlevels = 0.0
@@ -101,14 +98,13 @@ subroutine EigenSolverPackage(tolerance,npmax, numsdused, nftotal,jfound,Efound,
 	nlevels = 0
 
 !....................................
-	
-    nftotal = 0!!
+	nftotal = 0!!
 	jfound  = 0.d0
-    Efound = 0.0d0!!
-    normSum = 0.0d0
-    hamSum = 0.0d0
-    problist = 0.0d0
-    hamlist = 0.0d0
+	Efound = 0.0d0!!
+	normSum = 0.0d0
+	hamSum = 0.0d0
+	problist = 0.0d0
+	hamlist = 0.0d0
 	
 	if(allsameparity)then
 		nparity_soln=1
@@ -117,66 +113,62 @@ subroutine EigenSolverPackage(tolerance,npmax, numsdused, nftotal,jfound,Efound,
 	end if
 	
 !......... ADDED in 1.4.8 for densities
-if(finddense)then
-	allocate(solutions(nparity_soln,numOfJ))	
-end if
+	if(finddense)then
+		allocate(solutions(nparity_soln,numOfJ))	
+	end if
 
 !...........................	
-
-    do intJ = 1, numOfJ
-		
-        floatJ = xJlist(intJ)
+	do intJ = 1, numOfJ
+		floatJ = xJlist(intJ)
 		matdim = N_J_MK(1,1,intJ)%dimMK
 		localdim = matdim*numsdused
-        allocate(ParityEvals(nparity_soln,localdim))
-        allocate(normvals(nparity_soln,localdim))
-        allocate(TSDHmat(localdim,localdim))
-        allocate(TSDNmat(localdim,localdim))
+		allocate(ParityEvals(nparity_soln,localdim))
+		allocate(normvals(nparity_soln,localdim))
+		allocate(TSDHmat(localdim,localdim))
+		allocate(TSDNmat(localdim,localdim))
 		if(compute_expect)allocate(obsSDHmat(localdim,localdim),obsvals(nparity_soln,localdim))
-        nkeep = 0
-        ParityEvals = 0.0d0
+		nkeep = 0
+		ParityEvals = 0.0d0
 
-        do parityOUT = 1, nparity_soln
-            TSDHmat = cmplx(0.0d0,0.0d0)
-            TSDNmat = cmplx(0.0d0,0.0d0)
+		do parityOUT = 1, nparity_soln
+			TSDHmat = cmplx(0.0d0,0.0d0)
+			TSDNmat = cmplx(0.0d0,0.0d0)
 			do sdX = 1,numsdused
 				do ii = 1,matdim
 					a = ii+ (sdX-1)*matdim
 					do sdY = sdX,numsdused
 						do jj = 1,matdim
 							b = jj + (sdY-1)*matdim
-				            if (.not.allsameparity) then
-                                   TSDHmat(a,b) = & 
-		     0.5d0*(H_J_MK(sdX,sdY,intJ)%MK(ii,jj) + (-1.0d0)**(parityOUT+1)*PH_J_MK(sdX,sdY,intJ)%MK(ii,jj))
-                                   TSDNmat(a,b) = & 
-			 0.5d0*(N_J_MK(sdX,sdY,intJ)%MK(ii,jj) + (-1.0d0)**(parityOUT+1)*PN_J_MK(sdX,sdY,intJ)%MK(ii,jj))
-			                   if(compute_expect)then
-	             obsSDHmat(a,b)=0.5d0*(Hobs_J_MK(sdX,sdY,intJ)%MK(ii,jj)+(-1.0d0)**(parityOUT+1)*PHobs_J_MK(sdX,sdY,intJ)%MK(ii,jj))
-			                   end if
-			 
-							else
-				                TSDHmat(a,b) = H_J_MK(sdX,sdY,intJ)%MK(ii,jj)
-				                TSDNmat(a,b) = N_J_MK(sdX,sdY,intJ)%MK(ii,jj) 	
+							if (.not.allsameparity) then
+								TSDHmat(a,b) = & 
+								0.5d0*(H_J_MK(sdX,sdY,intJ)%MK(ii,jj) + (-1.0d0)**(parityOUT+1)*PH_J_MK(sdX,sdY,intJ)%MK(ii,jj))
+								TSDNmat(a,b) = & 
+								0.5d0*(N_J_MK(sdX,sdY,intJ)%MK(ii,jj) + (-1.0d0)**(parityOUT+1)*PN_J_MK(sdX,sdY,intJ)%MK(ii,jj))
+								if(compute_expect)then
+									obsSDHmat(a,b)=0.5d0*(Hobs_J_MK(sdX,sdY,intJ)%MK(ii,jj)+(-1.0d0)**(parityOUT+1)*PHobs_J_MK(sdX,sdY,intJ)%MK(ii,jj))
+								end if
+							else ! .not.allsameparity 
+								TSDHmat(a,b) = H_J_MK(sdX,sdY,intJ)%MK(ii,jj)
+								TSDNmat(a,b) = N_J_MK(sdX,sdY,intJ)%MK(ii,jj) 	
 								if(compute_expect)obsSDHmat(a,b)=Hobs_J_MK(sdX,sdY,intJ)%MK(ii,jj)					
-							end if
+							end if ! .not.allsameparity 
 !------------ ENFORCE HERMITICIY ------------------------------------------							
 							if(sdY > sdX)then
 								TSDNmat(b,a)=dconjg(TSDNmat(a,b))
 								TSDHmat(b,a)=dconjg(TSDHmat(a,b))
 								if(compute_expect)obsSDHmat(b,a)= dconjg(obsSDHmat(a,b))
-								
-							end if
-							
+							end if ! sdy > sdx 
 						end do !jj
-					end do ! sdY
+					end do ! sdy
 				end do ! ii
-			end do !sdX
+			end do ! sdx
 
-            do kk = 1, localdim
-                problist(parityOUT,intJ) = problist(parityOUT,intJ) + dble(TSDNmat(kk,kk))
-                hamlist(parityOUT,intJ) = hamlist(parityOUT,intJ) + dble(TSDHmat(kk,kk))
-            end do
+			do kk = 1, localdim
+				problist(parityOUT,intJ) = problist(parityOUT,intJ) + dble(TSDNmat(kk,kk))
+				hamlist(parityOUT,intJ)  = hamlist(parityOUT,intJ)  + dble(TSDHmat(kk,kk))
+			end do
 			
+			! PROBABLY NEED TO ADD MPI ROOT PROTECTION (BELOW)
 			if(localdim < 9)then
 				write(66,*)floatJ,' matrices '
 				write(66,*)' norm ',localdim
@@ -186,45 +178,40 @@ end if
 				write(66,*)' ham '
 				do ii = 1, localdim
 					write(66,'(10f8.3)')(TSDHmat(ii,kk),kk =1,localdim )
-				end do								
-			end if
+				end do
+			end if ! localdim < 9 
+			! PROBABLY NEED TO ADD MPI ROOT PROTECTION (ABOVE)
 
 
 !-----------------
-
-
-            if(compute_expect)then
-            call geneigsolverdiag_wexpect(localdim,nparity_soln,parityOUT,TSDNmat,TSDHmat,ObsSDHmat, & 
-			       tolerance,nf,ParityEvals,normvals,obsvals)
-		else
-			
-			if(finddense)then   !setting up for transformations for density matrices
-				myarrayindex=intJ
-				myparity=parityOUT
+			if(compute_expect)then
+				call geneigsolverdiag_wexpect(localdim,nparity_soln,parityOUT,TSDNmat,TSDHmat,ObsSDHmat, & 
+					tolerance,nf,ParityEvals,normvals,obsvals)
+			else
+				if(finddense)then   !setting up for transformations for density matrices
+					myarrayindex=intJ
+					myparity=parityOUT
+				end if
+				call geneigsolverdiag(localdim,nparity_soln,parityOUT,TSDNmat,TSDHmat,tolerance,nf,ParityEvals,normvals)
 			end if
-				
-            call geneigsolverdiag(localdim,nparity_soln,parityOUT,TSDNmat,TSDHmat,tolerance,nf,ParityEvals,normvals)
-   		    end if
-			
-            if (nf > nkeep) nkeep = nf
-        end do
 
-        normsum = normsum + problist(1,intJ)
-        hamsum = hamsum + hamlist(1,intJ)
-        if (.not.allsameparity) then
-            normsum = normsum + problist(2,intJ)
-            hamsum = hamsum + hamlist(2,intJ)
-        end if
+			if (nf > nkeep) nkeep = nf
+		end do ! parityOUT
 
-        do stateFound = 1, int(nkeep)
-            nftotal = nftotal + 1
-            jfound(nftotal) = floatJ!!
-            Efound(1,nftotal) = ParityEvals(1,stateFound)!!
+		normsum = normsum + problist(1,intJ)
+		hamsum = hamsum + hamlist(1,intJ)
+		if (.not.allsameparity) then
+			normsum = normsum + problist(2,intJ)
+			hamsum = hamsum + hamlist(2,intJ)
+		end if
+
+		do stateFound = 1, int(nkeep)
+			nftotal = nftotal + 1
+			jfound(nftotal) = floatJ!!
+			Efound(1,nftotal) = ParityEvals(1,stateFound)!!
 			if(compute_expect)obsfound(1,nftotal)=obsvals(1,stateFound)
 			if(compute_expect .and. .not.allsameparity)obsfound(2,nftotal)=obsvals(2,stateFound)
-			
-            if (.not.allsameparity) Efound(2,nftotal) = ParityEvals(2,stateFound)!!
-			
+			if (.not.allsameparity) Efound(2,nftotal) = ParityEvals(2,stateFound)
 			if(.not.allsameparity)then
 				if(Efound(1,nftotal)/=0.0)then
 					nlevels = nlevels + 1
@@ -232,39 +219,39 @@ end if
 					jlevels(nlevels)=jfound(nftotal)
 					paritylevels(nlevels)='+'
 					obslevels(nlevels)=obsfound(1,nftotal)
-					
-				end if
+				end if ! Efound
+
 				if(Efound(2,nftotal)/=0.0)then
 					nlevels = nlevels + 1
 					energylevels(nlevels)=Efound(2,nftotal)
 					jlevels(nlevels)=jfound(nftotal)
 					paritylevels(nlevels)='-'
 					obslevels(nlevels)=obsfound(2,nftotal)
-					
-				end if
-			else
+				end if ! Efound
+			else ! .not. allsameparity 
 				if(Efound(1,nftotal)/= 0.0)then
 					nlevels = nlevels + 1
 					energylevels(nlevels)=Efound(1,nftotal)
 					jlevels(nlevels)=jfound(nftotal)
 					paritylevels(nlevels)='+'
 					obslevels(nlevels)=obsfound(1,nftotal)
-					
-				end if
-			end if
-        end do
-        IF (myMPIrank == root) THEN 
-					if (nkeep<1) write(*,*)' No states for J = ',floatJ
-				END IF ! myMPIrank == root
+				end if ! Efound
+			end if ! .not. allsameparity
+		end do ! stateFound
+    
+		IF (myMPIrank == root) THEN 
+			if (nkeep<1) write(*,*)' No states for J = ',floatJ
+		END IF ! myMPIrank == root
 
-        deallocate(ParityEvals,normvals,TSDHmat,TSDNmat)
+		deallocate(ParityEvals,normvals,TSDHmat,TSDNmat)
 		if(compute_expect)deallocate(obsSDHmat,obsvals)
-    end do
+	end do ! intJ
 
-    1001 format(I3,2X,2F12.5,2X,F4.1)
-    1002 format(I3,2X,F12.5,2X,F4.1)
+1001 format(I3,2X,2F12.5,2X,F4.1)
+1002 format(I3,2X,F12.5,2X,F4.1)
 	
-return; end subroutine EigenSolverPackage
+	return
+end subroutine EigenSolverPackage
 
 !==============================================================================
 !

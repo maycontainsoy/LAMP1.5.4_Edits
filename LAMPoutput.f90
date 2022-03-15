@@ -275,232 +275,219 @@ contains
 SUBROUTINE J_WriteResults(tol,np,nf,jvals,pevals,obsvals,problist,hamlist,parityflag,nprint)
 
 !use errortests
-use eigenpackage
-use lamplight
-implicit none
+	use eigenpackage
+	use lamplight
+	implicit none
 
-real,    intent(in) :: tol
-integer (kind=8), intent(in) :: np, nf
-real    (kind=8), intent(in) :: jvals(np), pevals(2,np),obsvals(2,np)
-real    (kind=8), intent(in) :: problist(2,numOfJ),hamlist(2,numOfJ)
-logical, intent(in) :: parityflag
-integer(4),intent(in) :: nprint
-integer iprint,icount
-real(kind=8) :: probsum,hamSum,ex
-INTEGER :: i,iostatus
-CHARACTER (LEN = 1) :: choice
-CHARACTER (LEN = 4) :: shell
-CHARACTER (LEN = 26) :: name
-CHARACTER (LEN = 100) :: filename!, path
+	real,    intent(in) :: tol
+	integer (kind=8), intent(in) :: np, nf
+	real    (kind=8), intent(in) :: jvals(np), pevals(2,np),obsvals(2,np)
+	real    (kind=8), intent(in) :: problist(2,numOfJ),hamlist(2,numOfJ)
+	logical, intent(in) :: parityflag
+	integer(4),intent(in) :: nprint
+	integer iprint,icount
+	real(kind=8) :: probsum,hamSum,ex
+	INTEGER :: i,iostatus
+	CHARACTER (LEN = 1) :: choice
+	CHARACTER (LEN = 4) :: shell
+	CHARACTER (LEN = 26) :: name
+	CHARACTER (LEN = 100) :: filename!, path
 
 !path = '/home/Jtstaker/Desktop/JohnsonResearch/ProjectedData/'//TRIM(shell)//'_data/'
 
+	call sortresults
 
-call sortresults
-
-
-write(6,*)' '
-iprint = 0
-if(parityflag)then
-    if(compute_expect)then
-		
-	write(6,*)' State    E     Ex      J     parity      <obs>'
-else
-	write(6,*)' State    E     Ex      J     parity'
-end if
-	write(6,*)' ----------------------------------------------'
-		
-	
-	do i = 1,nlevels !min(nlevels,nprint)
-		ex= energylevels(i)-energylevels(1)
-		if(jtarget < 0 .or. jlevels(i)==jtarget)then
-			if(compute_expect)then
-		write(6,3001)i,energylevels(i),ex,jlevels(i),paritylevels(i),obslevels(i)
-	else
-		
-		write(6,3001)i,energylevels(i),ex,jlevels(i),paritylevels(i)
-		
-	endif
-		
-		iprint= iprint+1
-		if(iprint ==nprint)exit
-     	end if
-		
-	end do
-else
-	if(compute_expect)then
-	write(6,*)' State    E     Ex      J    <obs>  '
-else
-	write(6,*)' State    E     Ex      J     '
-end if
-	write(6,*)' ----------------------------------------'
-do i = 1,nlevels !min(nlevels,nprint)
-	ex= energylevels(i)-energylevels(1)
-	if(jtarget < 0 .or. jlevels(i)==jtarget)then
+	write(6,*)' '
+	iprint = 0
+	if(parityflag)then
 		if(compute_expect)then
-			write(6,3002)i,energylevels(i),ex,jlevels(i),obslevels(i)
+			write(6,*)' State    E     Ex      J     parity      <obs>'
 		else
-	        write(6,3002)i,energylevels(i),ex,jlevels(i)
-        end if
-	    iprint= iprint+1
-	    if(iprint ==nprint)exit
-    end if
+			write(6,*)' State    E     Ex      J     parity'
+		end if ! compute_expect
+		write(6,*)' ----------------------------------------------'
 	
-end do
-
-end if	
+		do i = 1,nlevels !min(nlevels,nprint)
+			ex= energylevels(i)-energylevels(1)
+			if(jtarget < 0 .or. jlevels(i)==jtarget)then
+				if(compute_expect)then
+					write(6,3001)i,energylevels(i),ex,jlevels(i),paritylevels(i),obslevels(i)
+				else ! compute_expect
+					write(6,3001)i,energylevels(i),ex,jlevels(i),paritylevels(i)
+				endif ! compute_expect
+				iprint= iprint+1
+				if(iprint ==nprint)exit
+			end if ! jtarget
+		end do
+	else ! parityFlag
+		if(compute_expect)then
+			write(6,*)' State    E     Ex      J    <obs>  '
+		else ! compute_expect
+			write(6,*)' State    E     Ex      J     '
+		end if ! compute_expect
+		write(6,*)' ----------------------------------------'
+		do i = 1,nlevels !min(nlevels,nprint)
+			ex= energylevels(i)-energylevels(1)
+			if(jtarget < 0 .or. jlevels(i)==jtarget)then
+				if(compute_expect)then
+					write(6,3002)i,energylevels(i),ex,jlevels(i),obslevels(i)
+				else
+					write(6,3002)i,energylevels(i),ex,jlevels(i)
+				end if
+				iprint= iprint+1
+				if(iprint ==nprint)exit
+			end if ! jtarget
+		end do ! i 
+	end if	! parityflag
 
 
 1000 FORMAT(I3,4(G15.8))
-PRINT*, ' Makes it here in LAMPoutput.f90 (~355)'
-WRITE(*,*) 'Write output to file? (Y or N)'
-PRINT*, ' Makes it here in LAMPoutput.f90 (~357)'
+	PRINT*, ' Makes it here in LAMPoutput.f90 (~355)' ! TESTING, REMOVE
+	WRITE(*,*) 'Write output to file? (Y or N)'
+	PRINT*, ' Makes it here in LAMPoutput.f90 (~357)' ! TESTING, REMOVE
 
-DO
-	READ(*,*) choice
-	IF ((choice == 'y').OR.(choice == 'Y')) THEN
-		EXIT
-	ELSEIF ((choice == 'n').OR.(choice == 'N')) THEN
-		RETURN
-	ELSE
-		WRITE(*,*) 'Y or N please.'
-	ENDIF
-END DO
-
-DO 
-	WRITE(*,*) 'Enter file name (without extention -- .res added): '
-	READ(*,*) name
-	filename = TRIM(name)//'.res'
-	OPEN(UNIT = 10, FILE = filename, STATUS = 'NEW',IOSTAT = iostatus)
-	IF (iostatus > 0) THEN
-		WRITE(*,*) "File already exists: Overwrite (o), append (a), new file name (n)?"
+	DO
 		READ(*,*) choice
-		DO icount = 1,5
-			IF ((choice == 'o').OR.(choice == 'O')) THEN
-				CLOSE(UNIT = 10)
-				OPEN(UNIT = 10, FILE = filename, STATUS = 'REPLACE')
-				EXIT
-			ELSEIF ((choice == 'a').OR.(choice == 'A')) THEN
-				CLOSE(UNIT = 10)
-				OPEN(UNIT = 10,FILE = filename, STATUS = 'OLD', POSITION = 'APPEND')
-				EXIT
-			ELSEIF ((choice == 'n').OR.(choice == 'N')) THEN
-				CLOSE(UNIT = 10)
-				EXIT
-			ELSE
-				WRITE(*,*) 'Incorrect choice.  Please select again.'
-			END IF
-		END DO
-		IF ((choice.NE.'n').AND.(choice.NE.'N')) EXIT
-	ELSE
-		EXIT
-	END IF
-END DO
+		IF ((choice == 'y').OR.(choice == 'Y')) THEN
+			EXIT
+		ELSEIF ((choice == 'n').OR.(choice == 'N')) THEN
+			RETURN
+		ELSE
+			WRITE(*,*) 'Y or N please.'
+		ENDIF
+	END DO
 
-call sortresults
+	DO 
+		WRITE(*,*) 'Enter file name (without extention -- .res added): '
+		READ(*,*) name
+		filename = TRIM(name)//'.res'
+		OPEN(UNIT = 10, FILE = filename, STATUS = 'NEW',IOSTAT = iostatus)
+		IF (iostatus > 0) THEN
+			WRITE(*,*) "File already exists: Overwrite (o), append (a), new file name (n)?"
+			READ(*,*) choice
+			DO icount = 1,5
+				IF ((choice == 'o').OR.(choice == 'O')) THEN
+					CLOSE(UNIT = 10)
+					OPEN(UNIT = 10, FILE = filename, STATUS = 'REPLACE')
+					EXIT
+				ELSEIF ((choice == 'a').OR.(choice == 'A')) THEN
+					CLOSE(UNIT = 10)
+					OPEN(UNIT = 10,FILE = filename, STATUS = 'OLD', POSITION = 'APPEND')
+					EXIT
+				ELSEIF ((choice == 'n').OR.(choice == 'N')) THEN
+					CLOSE(UNIT = 10)
+					EXIT
+				ELSE
+					WRITE(*,*) 'Incorrect choice.  Please select again.'
+				END IF ! choice flag 
+			END DO ! icount
+			IF ((choice.NE.'n').AND.(choice.NE.'N')) EXIT
+		ELSE
+			EXIT
+		END IF ! iostatus 
+	END DO
 
-write(10,*)' LAMP Results '
-write(10,*)' (cutoff criterion = ',tol,')'
-write(10,*)' '
-if(parityflag)then
-	if(compute_expect)then
-	   write(10,*)' State    E     Ex      J     parity    < obs >'
-   else
-	   write(10,*)' State    E     Ex      J     parity'
-    end if
-	write(10,*)' ------------------------------------------------'
+	call sortresults
+
+	write(10,*)' LAMP Results '
+	write(10,*)' (cutoff criterion = ',tol,')'
+	write(10,*)' '
+	if(parityflag)then
+		if(compute_expect)then
+			write(10,*)' State    E     Ex      J     parity    < obs >'
+		else
+			write(10,*)' State    E     Ex      J     parity'
+		end if
+		write(10,*)' ------------------------------------------------'
 !	DO i = 1, nf
 !		WRITE(10,1001) i,pevals(1,i),pevals(2,i),jvals(i)		
 !	END DO
-	1001 format(i3,2x,2F13.5,2x,f4.1)		
+1001 format(i3,2x,2F13.5,2x,f4.1)		
 	
-	do i = 1,nlevels
-		ex= energylevels(i)-energylevels(1)
+		do i = 1,nlevels
+			ex= energylevels(i)-energylevels(1)
+			if(compute_expect)then
+				write(10,3001)i,energylevels(i),ex,jlevels(i),paritylevels(i),obslevels(i)
+			else
+				write(10,3001)i,energylevels(i),ex,jlevels(i),paritylevels(i)			
+			end if
+		end do
+3001 format(i3,2x,2f13.5,2x,f4.1,2x,a1,2x,f13.5)
+
+	else ! parity flag 
 		if(compute_expect)then
-			write(10,3001)i,energylevels(i),ex,jlevels(i),paritylevels(i),obslevels(i)
+			write(10,*)' State       E        Ex         J       <obs >  '
 		else
-			write(10,3001)i,energylevels(i),ex,jlevels(i),paritylevels(i)			
-		end if
-		
-	end do
-	3001 format(i3,2x,2f13.5,2x,f4.1,2x,a1,2x,f13.5)
-
-else
-	if(compute_expect)then
-	write(10,*)' State       E        Ex         J       <obs >  '
-    else
-	write(10,*)' State       E        Ex         J     '
-    end if 
-
-	write(10,*)' ------------------------------------'
+			write(10,*)' State       E        Ex         J     '
+		end if 
+		write(10,*)' ------------------------------------'
 !	DO i = 1, nf
 !		WRITE(10,1002) i,pevals(1,i),jvals(i)		
 !	END DO
 1002 format(i3,2x,F12.5,2x,f4.1)	
-do i = 1,nlevels
-	ex= energylevels(i)-energylevels(1)
-	if(compute_expect)then
-	write(10,3002)i,energylevels(i),ex,jlevels(i),obslevels(i)
-    else
-	write(10,3002)i,energylevels(i),ex,jlevels(i)
-     end if
-	
-end do
-3002 format(i3,2x,2f13.5,2x,f4.1,2x,f13.5)
+		do i = 1,nlevels
+			ex= energylevels(i)-energylevels(1)
+			if(compute_expect)then
+				write(10,3002)i,energylevels(i),ex,jlevels(i),obslevels(i)
+			else
+				write(10,3002)i,energylevels(i),ex,jlevels(i)
+			end if
+		end do
 
-end if	
+3002 format(i3,2x,2f13.5,2x,f4.1,2x,f13.5)
+	end if	! parityflag 
 !DO i = 1, nf
 !	WRITE(10,1000) i,pevals(1,i),pevals(2,i),jvals(i)
 !END DO
-probsum = 0.d0 
-write(10,*)' '
-write(10,*)' Fraction in original HF state: Norm'
-write(10,*)' '
-if(parityflag)then
-	write(10,*)' J    frac(+)   frac(-)'
-	write(10,*)'-----------------------'
-	do i = 1,numOfJ
-		write(10,2001)xjlist(i),problist(1,i),problist(2,i)
-		probsum = probsum+problist(1,i)+problist(2,i)
-	end do
-	2001 format(f4.1,2f10.6)
-else
-	write(10,*)' J    frac'
-	write(10,*)'-----------------------'
-	do i = 1,numOfJ
-		write(10,2001)xjlist(i),problist(1,i)
-		probsum = probsum+problist(1,i)
-	end do
-end if
-write(10,*)' Total of HF state = ',probsum
+	probsum = 0.d0 
+	write(10,*)' '
+	write(10,*)' Fraction in original HF state: Norm'
+	write(10,*)' '
+	if(parityflag)then
+		write(10,*)' J    frac(+)   frac(-)'
+		write(10,*)'-----------------------'
+		do i = 1,numOfJ
+			write(10,2001)xjlist(i),problist(1,i),problist(2,i)
+			probsum = probsum+problist(1,i)+problist(2,i)
+		end do
+2001 format(f4.1,2f10.6)
+	else
+		write(10,*)' J    frac'
+		write(10,*)'-----------------------'
+		do i = 1,numOfJ
+			write(10,2001)xjlist(i),problist(1,i)
+			probsum = probsum+problist(1,i)
+		end do
+	end if ! parityflag 
+	write(10,*)' Total of HF state = ',probsum
 
-hamsum = 0.d0
-write(10,*)' '
-write(10,*)' Fraction in original HF state: Hamiltonian'
-write(10,*)' '
-if(parityflag)then
-	write(10,*)' J    frac(+)   frac(-)'
-	write(10,*)'-----------------------'
-	do i = 1,numOfJ
-		write(10,2002)xjlist(i),hamlist(1,i),hamlist(2,i)
-		hamsum = hamsum+hamlist(1,i)+hamlist(2,i)
-	end do
-	2002 format(f4.1,2(1X,f10.6))
-else
-	write(10,*)' J    frac'
-	write(10,*)'-----------------------'
-	do i = 1,numOfJ
-		write(10,2002)xjlist(i),hamlist(1,i)
-		hamsum = hamsum+hamlist(1,i)
-	end do
-end if
-write(10,*)' Total of sum of trace(H) = ',hamSum
+	hamsum = 0.d0
+	write(10,*)' '
+	write(10,*)' Fraction in original HF state: Hamiltonian'
+	write(10,*)' '
+	if(parityflag)then
+		write(10,*)' J    frac(+)   frac(-)'
+		write(10,*)'-----------------------'
+		do i = 1,numOfJ
+			write(10,2002)xjlist(i),hamlist(1,i),hamlist(2,i)
+			hamsum = hamsum+hamlist(1,i)+hamlist(2,i)
+		end do
+2002 format(f4.1,2(1X,f10.6))
+	else
+		write(10,*)' J    frac'
+		write(10,*)'-----------------------'
+		do i = 1,numOfJ
+			write(10,2002)xjlist(i),hamlist(1,i)
+			hamsum = hamsum+hamlist(1,i)
+		end do
+	end if
+	write(10,*)' Total of sum of trace(H) = ',hamSum
 
-CLOSE(UNIT = 10)
+	CLOSE(UNIT = 10)
 
-WRITE(*,*) ''
-WRITE(*,*) 'Data written to:',filename
-return
+	WRITE(*,*) ''
+	WRITE(*,*) 'Data written to:',filename
+	return
 
 END SUBROUTINE J_WriteResults
 !===================================================================

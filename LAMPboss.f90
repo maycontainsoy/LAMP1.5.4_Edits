@@ -123,6 +123,7 @@ CASE('e','E') ! menu_char
 	CALL MPI_BCAST(Jtolerance,1,MPI_INTEGER,root,icomm,ierr)
 
 	CALL findNewJmax(Jtolerance,newJmax)	! LAMPmanagelib.f90
+	PRINT*, ' Node = ', myMPIrank, ' makes it past findNewJmax'
 	CALL default_Jmesh 										! LAMPutils.f90
 	numOfBeta = numOfJ 
 	IF (myMPIrank == root) CALL CPU_TIME(ham_start)

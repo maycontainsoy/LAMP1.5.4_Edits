@@ -199,7 +199,7 @@ subroutine findNewJmax(Jtol,newJmax)
 	END IF ! 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(newJmax,1,MPI_REAL,root,icomm,ierr)
-	PRINT*, 'Node = ', myMPIrank, ' newJmax = ', newJmax ! TESTING, REMOVE
+	!PRINT*, 'Node = ', myMPIrank, ' newJmax = ', newJmax ! TESTING, REMOVE
 	if(newJmax < 0)return
 	
 	if(newJmax >= Jmax)return

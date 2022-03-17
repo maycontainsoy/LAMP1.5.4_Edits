@@ -65,7 +65,7 @@ module hamlib
 			END IF ! myMPIrank == root 
 			CALL MPI_BARRIER(icomm,ierr)
 			CALL MPI_BCAST(choicechar,1,MPI_CHARACTER,root,icomm,ierr)
-			PRINT*, ' Node = ', myMPIrank, ' before choicechar select ', choicechar
+			!PRINT*, ' Node = ', myMPIrank, ' before choicechar select ', choicechar
 	
 			select case (choicechar)
 			case('i')

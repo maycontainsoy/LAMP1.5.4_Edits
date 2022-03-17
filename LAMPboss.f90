@@ -122,6 +122,7 @@ CASE('e','E') ! menu_char
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(Jtolerance,1,MPI_INTEGER,root,icomm,ierr)
 
+	PRINT*, ' Node = ', myMPIrank, ' just before findNewJmax'
 	CALL findNewJmax(Jtolerance,newJmax)	! LAMPmanagelib.f90
 	PRINT*, ' Node = ', myMPIrank, ' makes it past findNewJmax'
 	CALL default_Jmesh 										! LAMPutils.f90

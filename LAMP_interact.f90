@@ -247,8 +247,8 @@ CONTAINS
 					PRINT*, ' (Enter END to stop)'
 					READ(5,'(A)') filename 
 				!END IF 
-				! CALL MPI_BARRIER(icomm,ierr)
-				! CALL MPI_BCAST(filename,25,MPI_CHARACTER,root,icomm,ierr)
+				CALL MPI_BARRIER(icomm,ierr)
+				CALL MPI_BCAST(filename,25,MPI_CHARACTER,root,icomm,ierr)
 					IF (filename == 'END' .OR. filename == 'end') THEN 
 						finished = .TRUE. 
 						RETURN 

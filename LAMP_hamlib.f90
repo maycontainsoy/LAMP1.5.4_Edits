@@ -70,9 +70,10 @@ module hamlib
 			select case (choicechar)
 			case('i')
 				call setup4tbmes			! in LAMP_interact.f90, no MPI
+				PRINT*, ' Node = ', myMPIrank, ' leaves setup4tbmes'
 				!IF (myMPIrank == root) 
 				call readvtbme				! in LAMP_interact.f90, currently stuck here
-				!PRINT*, ' Node = ', myMPIrank, ' leaves readvtbme'
+				PRINT*, ' Node = ', myMPIrank, ' leaves readvtbme'
 				call uncoupleXXmaster	! in this file
 				call undoSPE					! in this file 
 				call uncouplePNmaster	! in this file

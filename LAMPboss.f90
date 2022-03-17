@@ -111,7 +111,7 @@ CASE DEFAULT ! menu_char
 		PRINT*, ' Please choose (e) eneriges or (d) 1-body densities'
 		STOP 
 	END IF ! myMPIrank 
-	!CALL MPI_FINALIZE(icomm,ierr)
+
 !.... SOLVE FOR ENERGIES 
 CASE('e','E') ! menu_char
 	CALL ham_boss ! Read in Hamiltonian information, in LAMP_hamlib.f90
@@ -122,28 +122,23 @@ CASE('e','E') ! menu_char
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(Jtolerance,1,MPI_INTEGER,root,icomm,ierr)
 
-	CALL findNewJmax(Jtolerance,newJmax)	! located in LAMPmanagelib.f90
-	!PRINT*, ' Node = ', myMPIrank, ' after findNewJmax'
-	CALL default_Jmesh 
-	!PRINT*, ' Node = ', myMPIrank, ' after default_Jmesh'
+	CALL findNewJmax(Jtolerance,newJmax)	! LAMPmanagelib.f90
+	CALL default_Jmesh 										! LAMPutils.f90
 	numOfBeta = numOfJ 
-	CALL CPU_TIME(ham_start)
+	IF (myMPIrank == root) CALL CPU_TIME(ham_start)
+
 !.... CALCULATE NORM AND HAMILTONIAN MATRICES 
 	doHam = .TRUE. 
-	CALL deallocator 
-	CALL MPI_BARRIER(icomm,ierr)
-	CALL hmultMPIdistro
-	!PRINT*, ' Node = ', myMPIrank, ' after deallocator'
-	CALL projectorator 
-	!PRINT*, ' Node = ', myMPIrank, ' after projectorator'
-	CALL tracemaster 
-	!PRINT*, ' Node = ', myMPIrank, ' after tracemaster'
+	CALL deallocator 			! LAMPutils.f90
+	!CALL hmultMPIdistro		! LAMP_hamlib,f90 
+	CALL projectorator 		! LAMPmanagelib.f90
+	CALL tracemaster 			! LAMPoutput.f90 
 
-	IF (ychar == 'y' .OR. ychar == 'Y') THEN 
-		CALL printNorm(6)
+	IF (ychar == 'y' .OR. ychar == 'Y' .AND. myMPIrank == root) THEN 
+		CALL printNorm(6)		! LAMPoutput.f90
 	END IF 
 
-	CALL CPU_TIME(clock_stop)
+	IF (myMPIrank == root) CALL CPU_TIME(clock_stop)
 	ham_stop = clock_stop 
 
 !.... ADDED IN 1.4.4, JULY 2019 BY CWJ 
@@ -190,7 +185,7 @@ CASE('e','E') ! menu_char
 
 		compute_expect = .TRUE. 
 		CALL read_matfromfile 
-	CASE DEFAULT 
+	CASE DEFAULT ! e
 		IF (myMPIrank == root) THEN 
 			PRINT*, '' 
 			PRINT*, ' Computing energies and eigenvectors'
@@ -216,6 +211,7 @@ CASE('e','E') ! menu_char
 	END IF ! myMPIrank == root 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(nprint,1,MPI_INT,root,icomm,ierr)
+	PRINT*, ' Node = ', myMPIrank, ' nprint = ', nprint ! TESTING, REMOVE
 
 !.... ADDED IN 1.4.2: ABILITY TO DO CHANGES IN TOLERANCE 
 	ychar = 'y' 
@@ -225,7 +221,7 @@ CASE('e','E') ! menu_char
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(tolerance,1,MPI_REAL,root,icomm,ierr)
 
-	PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance
+	PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance ! TESTING, REMOVE
 
 	jtarget = -1. 
 	numsdused = numsd 
@@ -233,10 +229,14 @@ CASE('e','E') ! menu_char
 	! MIGHT NEED TO ROOT PROTECT THIS ENTIRE WHILE LOOP
 	!--------------------------------------------------
 	DO WHILE (ychar == 'y' .OR. ychar == 'Y')
-		PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance ! TESTING, REMOVE
-		PRINT*, ' Node = ', myMPIrank, ' nlevelmax = ', nlevelmax ! TESTING, REMOVE
-		PRINT*, ' Node = ', myMPIrank, ' numsdused = ', numsdused ! TESTING, REMOVE
+		! PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance ! TESTING, REMOVE
+		! PRINT*, ' Node = ', myMPIrank, ' nlevelmax = ', nlevelmax ! TESTING, REMOVE
+		! PRINT*, ' Node = ', myMPIrank, ' numsdused = ', numsdused ! TESTING, REMOVE
+		
+		
+		!IF (myMPIrank == root) THEN
 		CALL EigenSolverPackage(tolerance, nlevelmax, numsdused, nftotal, jall, pallPair, obsall, normSum, hamSum, problist, hamlist)	! in LAMPeigen.f90 
+		!END IF 
 		CALL MPI_BARRIER(icomm,ierr) ! TESTING, REMOVE
 		PRINT*, '' 
 		IF (myMPIrank == root) THEN 

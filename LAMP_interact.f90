@@ -246,14 +246,15 @@ CONTAINS
 					PRINT*, ' Enter interaction file name (.smint/.int)'
 					PRINT*, ' (Enter END to stop)'
 					READ(5,'(A)') filename 
-				END IF 
-				CALL MPI_BARRIER(icomm,ierr)
-				CALL MPI_BCAST(filename,25,MPI_CHARACTER,root,icomm,ierr)
-				IF (filename == 'END' .OR. filename == 'end') THEN 
-					finished = .TRUE. 
-					RETURN 
-				END IF ! filename == end or END 
-				ilast = INDEX(filename,' ') - 1
+				!END IF 
+				! CALL MPI_BARRIER(icomm,ierr)
+				! CALL MPI_BCAST(filename,25,MPI_CHARACTER,root,icomm,ierr)
+					IF (filename == 'END' .OR. filename == 'end') THEN 
+						finished = .TRUE. 
+						RETURN 
+					END IF ! filename == end or END 
+					ilast = INDEX(filename,' ') - 1
+				END IF ! myMPI
 	!---- ATTEMPT TO OPEN .smint FILE -------------------------------------
 				IF (myMPIrank == root) THEN 
 					OPEN(UNIT=1,file=filename(1:ilast)//'.smint',STATUS='OLD',ERR=101)

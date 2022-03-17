@@ -249,7 +249,7 @@ contains
 !		print*,overlapmat
 		end if ! .not.doHam and numsd > 1
 
-		CALL MPI_BARRIER(icomm,ierr)
+		!CALL MPI_BARRIER(icomm,ierr)
 
 		return
 	end subroutine tracemaster
@@ -342,9 +342,9 @@ SUBROUTINE J_WriteResults(tol,np,nf,jvals,pevals,obsvals,problist,hamlist,parity
 
 
 1000 FORMAT(I3,4(G15.8))
-	PRINT*, ' Makes it here in LAMPoutput.f90 (~355)' ! TESTING, REMOVE
+	!PRINT*, ' Makes it here in LAMPoutput.f90 (~355)' ! TESTING, REMOVE
 	WRITE(*,*) 'Write output to file? (Y or N)'
-	PRINT*, ' Makes it here in LAMPoutput.f90 (~357)' ! TESTING, REMOVE
+	!PRINT*, ' Makes it here in LAMPoutput.f90 (~357)' ! TESTING, REMOVE
 
 	DO
 		READ(*,*) choice
@@ -489,6 +489,7 @@ SUBROUTINE J_WriteResults(tol,np,nf,jvals,pevals,obsvals,problist,hamlist,parity
 	WRITE(*,*) 'Data written to:',filename
 	return
 
+	
 END SUBROUTINE J_WriteResults
 !===================================================================
 !---- ADDED IN 1.3.6-----------

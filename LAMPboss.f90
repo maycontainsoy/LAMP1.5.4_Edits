@@ -114,6 +114,7 @@ CASE DEFAULT ! menu_char
 
 !.... SOLVE FOR ENERGIES 
 CASE('e','E') ! menu_char
+	! Getting stuck somewhere in this subroutine
 	CALL ham_boss ! Read in Hamiltonian information, in LAMP_hamlib.f90
 	IF (myMPIrank == root) THEN 
 		PRINT*, ' Enter the tolerance for accept Js (typically ~0.00001 to 0.0001)'

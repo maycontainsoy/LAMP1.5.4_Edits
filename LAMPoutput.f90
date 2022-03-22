@@ -295,7 +295,7 @@ SUBROUTINE J_WriteResults(tol,np,nf,jvals,pevals,obsvals,problist,hamlist,parity
 
 !path = '/home/Jtstaker/Desktop/JohnsonResearch/ProjectedData/'//TRIM(shell)//'_data/'
 
-	call sortresults
+	call sortresults ! in LAMPoutput.f90 (here)
 
 	write(6,*)' '
 	iprint = 0
@@ -510,8 +510,8 @@ subroutine sortresults
 				k = j
 				etest = energylevels(j)
 			end if
-		
 		end do
+		
 		if(k > i)then ! swap
 			eswap = energylevels(i)
 			jswap = jlevels(i)
@@ -525,10 +525,7 @@ subroutine sortresults
 			jlevels(k)     =jswap
 			paritylevels(k)=parswap
 			obslevels(k)=oswap
-			
-			
 		end if
-	
 	end do
 	
 	return

@@ -240,7 +240,8 @@ CASE('e','E') ! menu_char
 		!IF (myMPIrank == root) THEN
 		CALL EigenSolverPackage(tolerance, nlevelmax, numsdused, nftotal, jall, pallPair, obsall, normSum, hamSum, problist, hamlist)	! in LAMPeigen.f90 
 		!END IF 
-		CALL MPI_BARRIER(icomm,ierr) ! TESTING, REMOVE
+		!CALL MPI_BARRIER(icomm,ierr) ! TESTING, REMOVE
+		PRINT*, ' Node = ', myMPIrank, ' makes it past eigensolverpackage'
 		PRINT*, '' 
 		IF (myMPIrank == root) THEN 
 			PRINT*, ' Sum of norms = ', DBLE(normSum)

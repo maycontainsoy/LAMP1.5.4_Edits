@@ -214,17 +214,17 @@ CASE('e','E') ! menu_char
 	END IF ! myMPIrank == root 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(nprint,1,MPI_INT,root,icomm,ierr)
-	!PRINT*, ' Node = ', myMPIrank, ' nprint = ', nprint ! TESTING, REMOVE
+	PRINT*, ' Node = ', myMPIrank, ' nprint = ', nprint ! TESTING, REMOVE
 
 !.... ADDED IN 1.4.2: ABILITY TO DO CHANGES IN TOLERANCE 
 	ychar = 'y' 
-	!IF (myMPIrank == root) THEN 
-	CALL inputTolerance(tolerance) ! located in managelilbs
-	!END IF ! myMPIrank 
+	IF (myMPIrank == root) THEN 
+		CALL inputTolerance(tolerance)
+	END IF ! myMPIrank 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(tolerance,1,MPI_REAL,root,icomm,ierr)
 
-	!PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance ! TESTING, REMOVE
+	PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance ! TESTING, REMOVE
 
 	jtarget = -1. 
 	numsdused = numsd 
@@ -241,7 +241,7 @@ CASE('e','E') ! menu_char
 		CALL EigenSolverPackage(tolerance, nlevelmax, numsdused, nftotal, jall, pallPair, obsall, normSum, hamSum, problist, hamlist)	! in LAMPeigen.f90 
 		!END IF 
 		!CALL MPI_BARRIER(icomm,ierr) ! TESTING, REMOVE
-		!PRINT*, ' Node = ', myMPIrank, ' makes it past eigensolverpackage'
+		PRINT*, ' Node = ', myMPIrank, ' makes it past eigensolverpackage'
 		PRINT*, '' 
 		IF (myMPIrank == root) THEN 
 			PRINT*, ' Sum of norms = ', DBLE(normSum)
@@ -255,7 +255,7 @@ CASE('e','E') ! menu_char
 		CALL MPI_BARRIER(icomm,ierr)
 		CALL MPI_BCAST(ychar,1,MPI_CHARACTER,root,icomm,ierr)
 
-		!PRINT*, ' Node = ', myMPIrank, ' ychar = ', ychar ! TESTING, REMOVE
+		PRINT*, ' Node = ', myMPIrank, ' ychar = ', ychar
 
 		IF ( ychar == 'y' .OR. ychar == 'Y' ) THEN 
 			CALL inputTolerance(tolerance)
@@ -286,19 +286,16 @@ CASE('d','D') ! menu_char
 	PRINT*, ' Must first find energies'
 !.... Read in Hamiltonian information 
 	CALL ham_boss 
-	! REPLACED BELOW BY CWJ RECOMMENDATION
-	! PRINT*, ' Enter the tolerance for accept Js (typically ~0.00001 to 0.0001)'
-	! READ*, Jtolerance 
-
-	! CWJ RECOMMENDED CORRECTION
 	IF (myMPIrank == root) THEN 
 		PRINT*, ' Enter the tolerance for accept Js (typically ~0.00001 to 0.0001)'
-		READ*,  Jtolerance 
+		READ*, Jtolerance 
 	END IF ! myMPIrank == root 
+!	print*,'(A0)',myMPIrank
+	
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(Jtolerance,1,MPI_INTEGER,root,icomm,ierr)
-	! CWJ RECOMMENDED CORRECTION 
-
+	
+!	print*,'(A1)',myMPIrank
 	CALL findNewJmax(Jtolerance,newJmax)
 	CALL default_Jmesh 
 	numOfBeta = numOfJ 

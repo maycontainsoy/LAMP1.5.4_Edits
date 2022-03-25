@@ -159,16 +159,6 @@ SUBROUTINE get_orb_info
 		CALL MPI_Bcast(allsameparity,1,MPI_logical,root,icomm,ierr)
 	END DO ! i = 1, numorb 
 	
-	! TESTING
-	! PRINT*, 'Node: ', myMPIrank, ' nr:     ', orbqn(:)%nr 
-	! PRINT*, 'Node: ', myMPIrank, ' l:       ', orbqn(:)%l 
-	! PRINT*, 'Node: ', myMPIrank, ' j:       ', orbqn(:)%j 
-	! PRINT*, 'Node: ', myMPIrank, ' w:       ', orbqn(:)%w 
-	! PRINT*, 'Node: ', myMPIrank, ' spstart: ', orbqn(:)%spstart 
-	! PRINT*, 'Node: ', myMPIrank, ' par:     ', orbqn(:)%par 
-	! PRINT*, 'Node: ', myMPIrank, ' isp:     ', isp 
-	! PRINT*, 'Node: ', myMPIrank, ' allsame: ', allsameparity
-
 	IF (myMPIrank == root) CLOSE(UNIT=1) ! .spo/.sps file 
 	RETURN
 

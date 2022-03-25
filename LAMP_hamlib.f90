@@ -65,15 +65,12 @@ module hamlib
 			END IF ! myMPIrank == root 
 			CALL MPI_BARRIER(icomm,ierr)
 			CALL MPI_BCAST(choicechar,1,MPI_CHARACTER,root,icomm,ierr)
-			!PRINT*, ' Node = ', myMPIrank, ' before choicechar select ', choicechar
 	
 			select case (choicechar)
 			case('i')
 				call setup4tbmes			! in LAMP_interact.f90, no MPI
-				PRINT*, ' Node = ', myMPIrank, ' leaves setup4tbmes'
 				!IF (myMPIrank == root) 
 				call readvtbme				! in LAMP_interact.f90, currently stuck here
-				PRINT*, ' Node = ', myMPIrank, ' leaves readvtbme'
 				call uncoupleXXmaster	! in this file
 				call undoSPE					! in this file 
 				call uncouplePNmaster	! in this file
@@ -292,7 +289,6 @@ module hamlib
 			enddo ! j 
 		enddo ! i 
 
-		! PRINT*, ' Node = ', myMPIrank, ' nmatxx = ', nmatxx
 		IF (myMPIrank == root) print*,' There are ',nmatxx,' PP/NN uncoupled TBMEs '
 		if (allocated(hmatxx).or.allocated(hmatorbxx)) then
 			deallocate(hmatxx,hmatorbxx)
@@ -395,7 +391,6 @@ module hamlib
 				endif
 			enddo ! loop over j
 		enddo    ! loop over i
- !     print*,' testing count of PP/NN matrix elements ',imatxx
 
 		return
 	end subroutine untbmeXX
@@ -634,7 +629,6 @@ module hamlib
 		enddo  ! loop over pa
 		if(countflag)then
 			nmatPN = nct
-			!PRINT*, ' Node = ', myMPIrank, ' nmatPN = ', nmatPN
 			IF (myMPIrank == root) print*,' There are ',nmatPN,' PN matrix elements '
 			if(allocated(hmatPN))then
 				deallocate(hmatPN)
@@ -917,10 +911,6 @@ module hamlib
 		! nmatNNstop(nMPIranks-1) = nmatnn 
 		nmatXXstop(nMPIranks-1) = nmatxx
 		nmatPNstop(nMPIranks-1) = nmatpn 
-
-		! CALL MPI_BARRIER(icomm,ierr) ! TESTING, REMOVE
-		! PRINT*, ' Node = ', myMPIrank, ' chunkXX = ', rankchunkXX 
-		! PRINT*, ' Node = ', myMPIrank, ' chunkPN = ', rankchunkPN 
 
 		RETURN 
 	END SUBROUTINE hmultMPIdistro 

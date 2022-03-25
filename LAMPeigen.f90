@@ -247,8 +247,6 @@ subroutine EigenSolverPackage(tolerance,npmax, numsdused, nftotal,jfound,Efound,
 		if(compute_expect)deallocate(obsSDHmat,obsvals)
 	end do ! intJ
 
-	PRINT*, ' Node = ', myMPIrank, ' local dim = ', localdim
-
 1001 format(I3,2X,2F12.5,2X,F4.1)
 1002 format(I3,2X,F12.5,2X,F4.1)
 	

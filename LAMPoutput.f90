@@ -152,14 +152,11 @@ contains
 		overlapmat= 0.d0
 	
 		if(.not.allsameparity)allocate(pnormtrace(numOfJ))
-
-		!PRINT*, ' Node = ', myMPIrank, ' makes it into tracemaster 1'	! TESTING, REMOVE
 	
 !........ SET UP ARRAYS mnormtrace,pmnormtrace	FOR f_M ......
 
 		xJmax = xJlist(numOfJ)
 		numOfM = nint(2*xJmax+1)
-		!PRINT*, ' Node = ', myMPIrank, ' xJmax = ', xJmax, ' numofM = ', numOfM, ' tracemaster 2' ! TESTING, REMOVE
 		if(numOfM/=J2max1 .AND. myMPIrank == root)then
 			print*,' Huh, some mismatch ',J2max1,numOfM
 !			stop
@@ -197,8 +194,6 @@ contains
 						mnormtrace(im)  = mnormtrace(im)  + 0.5* real(N_J_MK(sdX,sdX,iJ)%MK(ii,ii)+ PN_J_MK(sdX,sdX,iJ)%MK(ii,ii),kind=8)
 						pmnormtrace(im) = pmnormtrace(im) + 0.5* real(N_J_MK(sdX,sdX,iJ)%MK(ii,ii)- PN_J_MK(sdX,sdX,iJ)%MK(ii,ii),kind=8)
 					else
-!				print*,sdX,ij,ii,real(N_J_MK(sdX,sdX,iJ)%MK(ii,ii),kind=8)
-						!PRINT*, ' Node = ', myMPIrank, ' tracemaster 3' ! TESTING, REMOVE
 						trace = trace + real(N_J_MK(sdX,sdX,iJ)%MK(ii,ii),kind=8)
 						mnormtrace(im)= mnormtrace(im)+ real(N_J_MK(sdX,sdX,iJ)%MK(ii,ii),kind=8)
 						do kk=1,localdim
@@ -342,9 +337,7 @@ SUBROUTINE J_WriteResults(tol,np,nf,jvals,pevals,obsvals,problist,hamlist,parity
 
 
 1000 FORMAT(I3,4(G15.8))
-	!PRINT*, ' Makes it here in LAMPoutput.f90 (~355)' ! TESTING, REMOVE
 	WRITE(*,*) 'Write output to file? (Y or N)'
-	!PRINT*, ' Makes it here in LAMPoutput.f90 (~357)' ! TESTING, REMOVE
 
 	DO
 		READ(*,*) choice

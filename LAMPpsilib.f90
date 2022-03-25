@@ -78,10 +78,6 @@ contains
 		CALL MPI_BCAST(numprot,1,MPI_INT,root,icomm,ierr)
 		CALL MPI_BCAST(numneut,1,MPI_INT,root,icomm,ierr)
 		CALL MPI_BARRIER(icomm,ierr) ! REMOVE?
-
-		! Testing 
-		! PRINT*, 'Node: ', myMPIrank, ' numprot: ', numprot 
-		! PRINT*, 'Node: ', myMPIrank, ' numneut: ', numneut
 		
 		return
 	end subroutine set_nuclide      	
@@ -470,13 +466,6 @@ subroutine allocateSlaterDet
   ALLOCATE (psdf(numsd,nsps,numprot),nsdf(numsd,nsps,numneut))
 	ALLOCATE (pvec(nsps), nvec(nsps))
 
-	! TESTING
-	! PRINT*, 'Node = ', myMPIrank, ' shape of psdf, nsdf ', SHAPE(psdf), SHAPE(nsdf) ! REMOVE?
-	! PRINT*, 'Node = ', myMPIrank, ' shape of pvec, nvec ', SHAPE(pvec), SHAPE(nvec) ! REMOVE?
-
-	!pvec(:) = (0.D0, 0.D0)
-	!nvec(:) = (0.D0, 0.D0)
-
 	jj=0
 
 	! ~*~*~ Notes to SML from SML 
@@ -628,46 +617,7 @@ subroutine allocateSlaterDet
   	end do ! ii 
 	END IF ! myMPIrank == root 
 	! End MPI root protection 
-	! Broadcast Slater determinants here 
-	! Add flag for if MPI and override case triggered, send flag (probably not using)
-	!PRINT*, 'Node # ', myMPIrank, ' makes it to barrier allocateSD'
-	
-	!CALL MPI_BARRIER(icomm,ierr)
-	! Turn array into vectors, pass to other ranks and place in 
-	! correct array locations there. 
 
-	! TESTING BRUTE FORCE METHODS
-	! DO i = 1, numsd 
-	! 	DO j = 1, nsps 
-	! 		!IF (myMPIrank == root) THEN
-	! 		!DO k = 1, numprot ! TESTING
-	! 			!IF (myMPIrank == root) THEN ! TESTING
-	! 			!	PRINT*, nsdf(i,j,:)
-	! 			!END IF ! TESTING
-	! 			pvec(:) = psdf(i,j,:)
-	! 			nvec(:) = nsdf(i,j,:)
-	! 			CALL MPI_BARRIER(icomm,ierr) ! <-- processes should all wait here
-	! 			CALL MPI_BCAST(pvec(:),numprot,MPI_COMPLEX,root,icomm,ierr)
-	! 			CALL MPI_BCAST(nvec(:),numneut,MPI_COMPLEX,root,icomm,ierr)
-	! 			CALL MPI_BARRIER(icomm,ierr)
-	! 			psdf(i,j,:) = pvec(:)
-	! 			nsdf(i,j,:) = nvec(:)
-	! 			!CALL MPI_BCAST(psdf(i,j,:),numprot,MPI_COMPLEX,root,icomm,ierr)
-	! 			!CALL MPI_BCAST(nsdf(i,j,:),numneut,MPI_COMPLEX,root,icomm,ierr)
-	! 		!END DO ! TESTING
-	! 		!END IF ! myMPIrank == root
-	! 	END DO ! j = 1, nsps
-	! END DO ! i = 1, numsd
-	! CALL MPI_BARRIER(icomm,ierr)
-	! TESTING BRUTE FORCE METHODS
-
-	! THIS PORTION OF THE CODE IS FROM MY LOCAL MACHINE SO IT 
-	! MIGHT DIFFER FROM WHAT I WAS POSTING RECENTLY IN THE GOOGLE DOC
-	! (THAT WAS COMING FROM EDITS ON BEHEMOTH)
-	!ALLOCATE (pvec(nsps), nvec(nsps))
-	!IF (ALLOCATED(pvec)) PRINT*, 'Node # ', myMPIrank, ' pvec allocated'
-	!IF (ALLOCATED(nvec)) PRINT*, 'Node # ', myMPIrank, ' nvec allocated'
-	
 	!
 	!
 	!
@@ -701,8 +651,6 @@ subroutine allocateSlaterDet
 					psdf(isd,i,a) = pvec(i)
 				END DO 
 			END IF ! myMPIrank /= root
-			!PRINT*, ' Node = ', myMPIrank, ' psdf(isd,i,a) = ', psdf(isd,:,a) ! TESTING, REMOVE WHEN DONE
-			!PRINT*, ' '
 		END DO ! a
 	END DO ! isd 
 
@@ -721,8 +669,6 @@ subroutine allocateSlaterDet
 					nsdf(isd,i,a) = nvec(i)
 				END DO ! i 
 			END IF ! myMPIrank /= root 
-			! PRINT*, ' Node = ', myMPIrank, ' nsdf(isd,1,a) = ', nsdf(isd,1,a) ! TESTING, REMOVE WHEN DONE
-			! PRINT*, ''
 		END DO ! a 
 	END DO ! isd
 

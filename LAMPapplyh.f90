@@ -85,7 +85,6 @@ CONTAINS
 !	  print*,rhoij
 !C--------------- loop over matrix elements
 
-		! PRINT*, ' Node = ', myMPIrank, ' start of TBMExx' ! TESTING, REMOVE
 !$OMP PARALLEL shared(hmatorbXX,hmatXX), private(a,b,c,d,vtmp,zsum)
 !$OMP  do schedule(static) reduction(+:vtbmeXX)
       do itbme = 1,nmatXX
@@ -128,7 +127,6 @@ CONTAINS
       integer a,b,c,d
 
 !C--------------- loop over matrix elements
-			! PRINT*, ' Node = ', myMPIrank, ' start of TBMEpn' ! TESTING, REMOVE 
 !$OMP PARALLEL shared(hmatorbPN,hmatPN), private(a,b,c,d,vtmp,zsum)
 !$OMP  do schedule(static) reduction(+:vtbmePN)
       do itbme = 1,nmatPN

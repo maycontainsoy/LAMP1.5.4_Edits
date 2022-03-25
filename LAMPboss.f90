@@ -74,7 +74,7 @@ END IF
 !$OMP END PARALLEL 
 
 ! Start to count calculating time 
-!CALL CPU_TIME(clock_start)
+IF (myMPIrank == root) CALL CPU_TIME(clock_start)
 CALL get_orb_info							! located in LAMPsplib.f90
 CALL unfold_spstates					! located in LAMPsplib.f90
 CALL set_nuclide 							! located in LAMPpsilib.f90
@@ -86,11 +86,11 @@ CALL default_Jmesh 						! likely run independently, located in LAMPutils.f90 SI
 numOfBeta = numOfJ 
 doHam = .FALSE. 
 
-!CALL CPU_TIME(norm_start)			! might need to modify or protect for MPI runs
+IF (myMPIrank == root) CALL CPU_TIME(norm_start)			! might need to modify or protect for MPI runs
 CALL projectorator 												! located in LAMPmanagelib.f90, keep an eye on some subroutines
 CALL tracemaster 													! located in LAMPoutput.f90
 IF (myMPIrank == root) CALL printNorm(6) 	! located in LAMPoutput.f90
-!CALL CPU_TIME(norm_stop)			! might need to modify or protect for MPI runs
+IF (myMPIrank == root) CALL CPU_TIME(norm_stop)			! might need to modify or protect for MPI runs
 
 IF (myMPIrank == root) THEN 
 	PRINT*, ''
@@ -102,7 +102,6 @@ END IF
 
 CALL MPI_BARRIER(icomm,ierr)
 CALL MPI_BCAST(menu_char,1,MPI_CHARACTER,root,icomm,ierr)
-PRINT*, ' Node = ', myMPIrank, ' menu_char = ', menu_char 
 
 SELECT CASE(menu_char)
 CASE DEFAULT ! menu_char
@@ -122,10 +121,7 @@ CASE('e','E') ! menu_char
 	END IF ! myMPIrank == root 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(Jtolerance,1,MPI_INTEGER,root,icomm,ierr)
-
-	PRINT*, ' Node = ', myMPIrank, ' just before findNewJmax'
 	CALL findNewJmax(Jtolerance,newJmax)	! LAMPmanagelib.f90
-	PRINT*, ' Node = ', myMPIrank, ' makes it past findNewJmax'
 	CALL default_Jmesh 										! LAMPutils.f90
 	numOfBeta = numOfJ 
 	IF (myMPIrank == root) CALL CPU_TIME(ham_start)
@@ -133,7 +129,7 @@ CASE('e','E') ! menu_char
 !.... CALCULATE NORM AND HAMILTONIAN MATRICES 
 	doHam = .TRUE. 
 	CALL deallocator 			! LAMPutils.f90
-	!CALL hmultMPIdistro		! LAMP_hamlib,f90 
+	CALL hmultMPIdistro		! LAMP_hamlib,f90 
 	CALL projectorator 		! LAMPmanagelib.f90
 	CALL tracemaster 			! LAMPoutput.f90 
 
@@ -157,8 +153,6 @@ CASE('e','E') ! menu_char
 	END IF ! myMPIrank == root 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(eval_char,1,MPI_CHARACTER,root,icomm,ierr)
-
-	PRINT*, ' Node = ', myMPIrank, ' eval_char = ', eval_char
 
 	SELECT CASE(eval_char)
 	CASE('w','W') ! eval_char
@@ -214,34 +208,20 @@ CASE('e','E') ! menu_char
 	END IF ! myMPIrank == root 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(nprint,1,MPI_INT,root,icomm,ierr)
-	!PRINT*, ' Node = ', myMPIrank, ' nprint = ', nprint ! TESTING, REMOVE
 
 !.... ADDED IN 1.4.2: ABILITY TO DO CHANGES IN TOLERANCE 
 	ychar = 'y' 
-	!IF (myMPIrank == root) THEN 
 	CALL inputTolerance(tolerance) ! located in managelilbs
-	!END IF ! myMPIrank 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(tolerance,1,MPI_REAL,root,icomm,ierr)
-
-	!PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance ! TESTING, REMOVE
 
 	jtarget = -1. 
 	numsdused = numsd 
 	!--------------------------------------------------
 	! MIGHT NEED TO ROOT PROTECT THIS ENTIRE WHILE LOOP
 	!--------------------------------------------------
-	DO WHILE (ychar == 'y' .OR. ychar == 'Y')
-		! PRINT*, ' Node = ', myMPIrank, ' tolerance = ', tolerance ! TESTING, REMOVE
-		! PRINT*, ' Node = ', myMPIrank, ' nlevelmax = ', nlevelmax ! TESTING, REMOVE
-		! PRINT*, ' Node = ', myMPIrank, ' numsdused = ', numsdused ! TESTING, REMOVE
-		
-		
-		!IF (myMPIrank == root) THEN
+	DO WHILE (ychar == 'y' .OR. ychar == 'Y')		
 		CALL EigenSolverPackage(tolerance, nlevelmax, numsdused, nftotal, jall, pallPair, obsall, normSum, hamSum, problist, hamlist)	! in LAMPeigen.f90 
-		!END IF 
-		!CALL MPI_BARRIER(icomm,ierr) ! TESTING, REMOVE
-		!PRINT*, ' Node = ', myMPIrank, ' makes it past eigensolverpackage'
 		PRINT*, '' 
 		IF (myMPIrank == root) THEN 
 			PRINT*, ' Sum of norms = ', DBLE(normSum)
@@ -254,8 +234,6 @@ CASE('e','E') ! menu_char
 		END IF ! myMPIrank == root 
 		CALL MPI_BARRIER(icomm,ierr)
 		CALL MPI_BCAST(ychar,1,MPI_CHARACTER,root,icomm,ierr)
-
-		!PRINT*, ' Node = ', myMPIrank, ' ychar = ', ychar ! TESTING, REMOVE
 
 		IF ( ychar == 'y' .OR. ychar == 'Y' ) THEN 
 			CALL inputTolerance(tolerance)

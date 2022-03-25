@@ -40,9 +40,7 @@ subroutine projectorator
 ! 	
 	! Need to redo timing for MPI
 	! CALL SYSTEM_CLOCK(c1)
-	!PRINT*, ' Node = ', myMPIrank, ' before basic_sampling'
 	call basic_sampling			! in LAMPsampler.f90
-	!PRINT*, ' Node = ', myMPIrank, ' after basic_sampling'
 	! CALL SYSTEM_CLOCK(c2)
 	! WRITE(*,*) '**************'
 	! WRITE(*,*) 'basic sampling system clock: ', (c2-c1)/rate
@@ -199,7 +197,6 @@ subroutine findNewJmax(Jtol,newJmax)
 	END IF ! 
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(newJmax,1,MPI_REAL,root,icomm,ierr)
-	!PRINT*, 'Node = ', myMPIrank, ' newJmax = ', newJmax ! TESTING, REMOVE
 	if(newJmax < 0)return
 	
 	if(newJmax >= Jmax)return

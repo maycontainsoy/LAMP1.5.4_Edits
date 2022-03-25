@@ -142,16 +142,23 @@ module lamplight
 					write(*,*) 'Please re-enter J-max.'
 				end if ! mod
 			end do !
+		! END IF ! myMPIrank == root
+
+			numOfJ = int(Jmax + 1.)
+			J2max1 = int(2.*Jmax)+1
+			numOfJout = numOfJ
+			J2max1out = J2max1   ! used for output; may be modified later
 		END IF ! myMPIrank == root
 
 		CALL MPI_BARRIER(icomm,ierr)
 		CALL MPI_BCAST(Jmax,1,MPI_INT,root,icomm,ierr)
+		CALL MPI_BCAST(numOfJ,1,MPI_INT,root,icomm,ierr)
+		CALL MPI_BCAST(J2max1,1,MPI_INT,root,icomm,ierr)
+		CALL MPI_BCAST(numOfJout,1,MPI_INT,root,icomm,ierr)
+		CALL MPI_BCAST(J2max1out,1,MPI_INT,root,icomm,ierr)
 
 !--------------------- SET "numOfJ" & "J2max1" ----------------------
-		numOfJ = int(Jmax + 1.)
-		J2max1 = int(2.*Jmax)+1
-		numOfJout = numOfJ
-		J2max1out = J2max1   ! used for output; may be modified later
+		PRINT*, ' Node = ', myMPIrank, 'J2max1 = ', J2max1
 
 		RETURN
 	END SUBROUTINE inputJmax
@@ -278,6 +285,7 @@ module lamplight
 				prime(ii) = 3*nu + 1 - ii
 			end do
 		else
+			PRINT*, J2max1
 			stop "Something wrong with the Jmax"
 		end if
 
@@ -336,8 +344,6 @@ module lamplight
 		INTEGER :: temperr 
 		
 		allocate(N_ijk(numsd,numsd,J2max1,numOfJ,J2max1),STAT=temperr)
-		! PRINT*, ' Node = ', myMPIrank, ' allsameparity = ', allsameparity ! TESTING, REMOVE
-		! PRINT*, ' Node = ', myMPIrank, ' temperr 4 sampling = ', temperr 	! TESTING, REMOVE
     if(.not.allsameparity)allocate(PN_ijk(numsd,numsd,J2max1,numOfJ,J2max1))
 		if(doHam)then
 			allocate(H_ijk(numsd,numsd,J2max1,numOfJ,J2max1))	
@@ -421,15 +427,12 @@ module lamplight
 
 		if(allocated(Zmat))deallocate(Zmat)
 		allocate(Zmat(J2max1,J2max1),STAT=temperr)
-		!PRINT*, ' Node = ', myMPIrank, ' Zmat allocation temperr = ', temperr 		! TESTING, REMOVE
 		if(allocated(Zmatinv))deallocate(Zmatinv)
 		allocate(Zmatinv(J2max1,J2max1),STAT=temperr)
-		!PRINT*, ' Node = ', myMPIrank, ' Zmatinv allocation temperr = ', temperr	! TESTING, REMOVE
 
 		xJ = dble(J2max1-1)*0.5d0
 		xK = -xJ
 
-		! PRINT*, ' Node = ', myMPIrank, ' alpha_i(1) = ', alpha_i(1)
 		do ik = 1, J2max1
 			do jk = 1,J2max1			 
 				Zmat(jk,ik) = exp((0.d0,1.d0)*xK*alpha_i(jk))
@@ -437,7 +440,6 @@ module lamplight
 			xK = xK + 1.d0
 		end do ! ik
 
-		! PRINT*, ' Node = ', myMPIrank, ' Zmat(1,1) = ', Zmat(1,1)
 
 		call complex_inverse(J2max1,Zmat,Zmatinv,info)
 

@@ -450,16 +450,22 @@ subroutine allocateSlaterDet
 	allocate(psdtmp(nsps,numprot))
 	allocate(nsdtmp(nsps,numneut))
 	
+	! TESTING, REMOVE
+	PRINT*, ' Node = ', myMPIrank, ' nsps = ', nsps 
+	PRINT*, ' Node = ', myMPIrank, ' numprot = ', numprot 
+	PRINT*, ' Node = ', myMPIrank, ' numneut = ', numneut 
+	! TESTING, REMOVE 
+
   IF (myMPIrank == root) THEN 
 		print*,' Enter number of Slater determinants '
 		read*,numsd
 	END IF ! myMPIrank 
 
-	!CALL MPI_BARRIER(icomm,ierr)
-	CALL MPI_BCAST(numsd,1,MPI_INT,root,icomm,ierr)
 	CALL MPI_BARRIER(icomm,ierr)
+	CALL MPI_BCAST(numsd,1,MPI_INT,root,icomm,ierr)
+	!CALL MPI_BARRIER(icomm,ierr)
 
-	! PRINT*, 'node # ', myMPIrank, ' numsd = ', numsd ! REMOVE?
+	PRINT*, ' Node = ', myMPIrank, ' numsd = ', numsd ! TESTING, REMOVE
 
 !	print*,' testing ',numsd,nsps,numprot,numneut, ' TESTING'
 	! Check that these are correctly allocated on all ranks
@@ -672,7 +678,9 @@ subroutine allocateSlaterDet
 		END DO ! a 
 	END DO ! isd
 
-	CALL MPI_BARRIER(icomm,ierr)
+	PRINT*, ' Node = ', myMPIrank, 'psdf(1,1,1) = ', psdf(1,1,1) ! TESTING, REMOVE
+
+	!CALL MPI_BARRIER(icomm,ierr)
 
 	! ~*~*~ Notes from SML to SML
 	! Need to test this subroutine to make sure that the information is being 

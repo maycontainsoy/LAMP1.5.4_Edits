@@ -79,7 +79,9 @@ CALL get_orb_info							! located in LAMPsplib.f90
 CALL unfold_spstates					! located in LAMPsplib.f90
 CALL set_nuclide 							! located in LAMPpsilib.f90
 CALL factorial(-70.d0,x)			! Just to initialize
+PRINT*, ' Node ', myMPIrank, ' before allocateSlaterDet in boss' ! TESTING, REMOVE
 CALL allocateSlaterDet 				! located in LAMPpsilib.f90 
+PRINT*,' Node = ', myMPIrank, ' before input Jmax in boss' ! TESTING, REMOVE
 CALL inputJmax 								! located in LAMPutils.f90  
 CALL default_Jmesh 						! likely run independently, located in LAMPutils.f90 SIMPLE!
 

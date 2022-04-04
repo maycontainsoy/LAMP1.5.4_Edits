@@ -479,6 +479,7 @@ subroutine allocateSlaterDet
 	! I don't think this is the source of the error but it is something that 
 	! we may need to implement in the future.
 	! ADD ROOT PROTECTION
+	CALL MPI_BARRIER(icomm,ierr) ! TESTING, REMOVE?
 	IF (myMPIrank == root) THEN 
   	do ii = 1,numsd
 			if(jj==numsd)return
@@ -642,7 +643,9 @@ subroutine allocateSlaterDet
 	! This portion of the code is functioning but can probably be improved
 	! and optimized. This should probably been tested for speed up in two or 
 	! three different ways to ensure efficiency. 
+	CALL MPI_BARRIER(icomm,ierr) ! TESTING
 	DO isd = 1, numsd 
+		PRINT*, ' Node = ', myMPIrank, ' isd = ', isd
 		DO a = 1, numprot 
 			IF (myMPIrank == root) THEN
 				DO i = 1, nsps 
@@ -678,7 +681,7 @@ subroutine allocateSlaterDet
 		END DO ! a 
 	END DO ! isd
 
-	PRINT*, ' Node = ', myMPIrank, 'psdf(1,1,1) = ', psdf(1,1,1) ! TESTING, REMOVE
+	WRITE(10+myMPIrank,*), ' Node = ', myMPIrank, 'psdf(:,:,:) = ', psdf(:,:,:) ! TESTING, REMOVE
 
 	!CALL MPI_BARRIER(icomm,ierr)
 

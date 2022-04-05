@@ -150,21 +150,19 @@ module lamplight
 			J2max1out = J2max1   ! used for output; may be modified later
 		END IF ! myMPIrank == root
 
-		PRINT*, ' Node = ', myMPIrank, ' makes it to Jmax bcast' ! TESTING, REMOVE
 		CALL MPI_BARRIER(icomm,ierr)
 		CALL MPI_BCAST(Jmax,1,MPI_INT,root,icomm,ierr)
 		CALL MPI_BCAST(numOfJ,1,MPI_INT,root,icomm,ierr)
 		CALL MPI_BCAST(J2max1,1,MPI_INT,root,icomm,ierr)
 		CALL MPI_BCAST(numOfJout,1,MPI_INT,root,icomm,ierr)
 		CALL MPI_BCAST(J2max1out,1,MPI_INT,root,icomm,ierr)
-
+!--------------------- SET "numOfJ" & "J2max1" ----------------------
 		! numOfJ = int(Jmax + 1.)
 		! J2max1 = int(2.*Jmax)+1
 		! numOfJout = numOfJ
 		! J2max1out = J2max1   ! used for output; may be modified later
 
-!--------------------- SET "numOfJ" & "J2max1" ----------------------
-		PRINT*, ' Node = ', myMPIrank, 'J2max1 = ', J2max1
+
 
 		RETURN
 	END SUBROUTINE inputJmax

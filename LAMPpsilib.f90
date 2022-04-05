@@ -450,12 +450,6 @@ subroutine allocateSlaterDet
 	allocate(psdtmp(nsps,numprot))
 	allocate(nsdtmp(nsps,numneut))
 	
-	! TESTING, REMOVE
-	PRINT*, ' Node = ', myMPIrank, ' nsps = ', nsps 
-	PRINT*, ' Node = ', myMPIrank, ' numprot = ', numprot 
-	PRINT*, ' Node = ', myMPIrank, ' numneut = ', numneut 
-	! TESTING, REMOVE 
-
   IF (myMPIrank == root) THEN 
 		print*,' Enter number of Slater determinants '
 		read*,numsd
@@ -464,8 +458,6 @@ subroutine allocateSlaterDet
 	CALL MPI_BARRIER(icomm,ierr)
 	CALL MPI_BCAST(numsd,1,MPI_INT,root,icomm,ierr)
 	!CALL MPI_BARRIER(icomm,ierr)
-
-	PRINT*, ' Node = ', myMPIrank, ' numsd = ', numsd ! TESTING, REMOVE
 
 !	print*,' testing ',numsd,nsps,numprot,numneut, ' TESTING'
 	! Check that these are correctly allocated on all ranks
@@ -615,13 +607,15 @@ subroutine allocateSlaterDet
 			   
 				  if ( jj == numsd ) then
 					  close(ifile)		   
-					  return
+					  !return
+					  goto 201 ! replaces old return statement (above)
 				  end if
 				  print*,' Enter a Slater determinant index (0 or -1 to stop )'
 				  read*,isd
 			  end do ! isd > 0 and <= nSDs
 	  	end if ! nSDs == 1
   	end do ! ii 
+		201 continue 
 	END IF ! myMPIrank == root 
 	! End MPI root protection 
 
@@ -680,8 +674,6 @@ subroutine allocateSlaterDet
 			END IF ! myMPIrank /= root 
 		END DO ! a 
 	END DO ! isd
-
-	WRITE(10+myMPIrank,*), ' Node = ', myMPIrank, 'psdf(:,:,:) = ', psdf(:,:,:) ! TESTING, REMOVE
 
 	!CALL MPI_BARRIER(icomm,ierr)
 

@@ -1,6 +1,6 @@
 #CFLAGS   = -O2 -w
 #CFLAGS	 = -O2  # -g -fbounds-check -fbacktrace
-CFLAGS = -g -fbounds-check -Wall -fbacktrace -finit-real=nan
+CFLAGS = -O2 # -g -fbounds-check -Wall -fbacktrace -finit-real=nan
 #CFLAGS= -O2  #-fbounds-check
 OMPFLAG_gfortran="-fopenmp" # -fbounds-check"
 OMPFLAG_ifort= -openmp

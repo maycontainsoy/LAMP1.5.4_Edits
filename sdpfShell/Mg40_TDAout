@@ -1,0 +1,165 @@
+   WELCOME to LAMP
+   Version 1.5.4, Oct 2021
+   Authors: C. W. Johnson, S. M. Lauber, C. F. Jiao
+   based upon work by J. Staker and K. O Mara
+ 
+  NUM_THREADS =            1
+  NUM MPI RANKS =            1
+  Enter file with s.p. orbit information (.spo/.sps)
+  Enter Z, N 
+  Enter number of Slater determinants 
+  Enter input filename (.sd)
+Title card: "Mg40 sdpf min -151.1054 0.120 0.079                         "
+  Enter input filename (.sd)
+Title card: "Mg40 min sdpf TDA phonons                                   "
+  There are           20  Slater determinants in this file 
+  Enter a Slater determinant index (0 or -1 to stop )
+  To read from an ordered list, enter -999 
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Node =            0  isd =            1
+  Node =            0  isd =            2
+  Node =            0  isd =            3
+  Node =            0  isd =            4
+  Node =            0  isd =            5
+  Node =            0  isd =            6
+  Node =            0  isd =            7
+  Node =            0  isd =            8
+  Node =            0  isd =            9
+  Node =            0  isd =           10
+  Node =            0  isd =           11
+  Node =            0  isd =           12
+  Node =            0  isd =           13
+  Node =            0  isd =           14
+  Node =            0  isd =           15
+  Node =            0  isd =           16
+  Node =            0  isd =           17
+  Node =            0  isd =           18
+  Node =            0  isd =           19
+  Node =            0  isd =           20
+  Node =            0  isd =           21
+ Enter J-max to project (integer value):
+  
+  Number of ANGLES in Euler mesh =        12615
+  Use only         6945  Euler angles out of        12615
+  sum rule    21.0021247362120     
+  SD overlap eigenvalues =   4.860486827810780E-002  0.450768507117488     
+  0.462355166510199       0.491267515670791       0.491757728129733     
+  0.499873139894587       0.502095854668906       0.504193481696825     
+  0.505705308881764       0.507307348985849       0.510291290069364     
+  0.527752546294683       0.547902973859128       0.570132297357859     
+  0.582323661201898       0.617084679626924       0.639027059116185     
+  0.731565002743618       0.741458695880764       0.766861496259763     
+   10.3037961139676     
+  
+  Fraction in original HF state: Norm
+  
+    J    frac(+)   frac(-)
+ -------------------------
+   0.0  0.923447  0.037022
+   1.0  0.228289  0.099902
+   2.0  4.212380  0.449375
+   3.0  0.704340  0.572212
+   4.0  4.890479  0.672691
+   5.0  0.798131  0.828489
+   6.0  3.012552  0.663137
+   7.0  0.353365  0.375678
+   8.0  1.232177  0.235592
+   9.0  0.102486  0.108243
+  10.0  0.337667  0.052748
+  11.0  0.021379  0.019613
+  12.0  0.053764  0.007313
+  13.0  0.002538  0.002220
+  14.0  0.004197  0.000697
+  Total of sum of trace(N) =    21.0021247362120     
+ 
+  Choose one of the following: 
+  (e) Compute energies or similar operator ONLY
+  (d) 1-body densities (will compute energies first)
+  
+  Do you want to read in files in (i) isospin conserving format (old format) 
+  or (x) explicit proton-neutron (xpn) format?  (enter i/x)
+  Enter interaction file name (.smint/.int)
+  (Enter END to stop)
+  
+  AUTOSCALING two-body matrix elements
+  
+  Autoscale parameters    42.00000       64.00000      0.3000000    
+  0.8812940    
+  Enter interaction file name (.smint/.int)
+  (Enter END to stop)
+  about to decouple 
+  there are          496  uncoupled pairs 
+  there are          496  uncoupled pairs 
+  There are         7622  PP/NN uncoupled TBMEs 
+  decoupled 
+  There are        30964  PN matrix elements 
+  Enter the tolerance for accept Js (typically ~0.00001 to 0.0001)
+  
+  New Jmax =    14.00000              15
+  
+  NEW OPTION: 
+  Enter a maximum J for output (enter -1 to output all )
+  (Large values of J, especially for a large number of reference states, 
+   can take a long time to diagonalize/write out)
+  
+  Number of ANGLES in Euler mesh =        12615
+  Use only         6945  Euler angles out of        12615
+  Trace Hamiltonian =   -3145.29879735092     
+  sum rule    21.0021247362120     
+ 
+  Evaluation options: 
+  (e) (default) compute energies
+  (w) write matrices to file
+  (x) read matrices and compute expectation values
+ 
+ 
+  Computing energies and eigenvectors
+ 
+  How many energies to print to screen? (all will be written to file)
+  Enter tolerance for norm (typical = 0.0001 to 0.001) 
+ 
+  Sum of norms =    21.0021247362120     
+  Sum of trace(H) =   -3145.29879735092     
+  
+  State    E     Ex      J     parity
+  ----------------------------------------------
+  1     -153.22240      0.00000   0.0  +
+  2     -152.74992      0.47248   2.0  +
+  3     -151.73089      1.49151   4.0  +
+  4     -151.24775      1.97465   0.0  +
+  5     -151.02290      2.19950   3.0  -
+  6     -150.77227      2.45013   2.0  +
+  7     -150.73374      2.48867   1.0  -
+  8     -150.69359      2.52882   0.0  -
+  9     -150.49308      2.72932   2.0  -
+ 10     -150.46814      2.75426   4.0  -
+ Write output to file? (Y or N)
+ Enter file name (without extention -- .res added): 
+ 
+ Data written to:
+ Mg40_TDA21.res                                                                 
+                      
+ 
+  Do you want to run with other parameters (y/n)?
+     TIME of total LAMP calculation:    6749.10000000000       seconds
+     TIME of norm calculation:    1539.41200000000       seconds
+     TIME of ham calculation:    5209.60800000000       seconds
+     TIME of projectorator calculation:    5209.60400000000       seconds

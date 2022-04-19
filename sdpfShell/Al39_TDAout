@@ -1,0 +1,127 @@
+   WELCOME to LAMP
+   Version 1.5.4, Oct 2021
+   Authors: C. W. Johnson, S. M. Lauber, C. F. Jiao
+   based upon work by J. Staker and K. O Mara
+ 
+  NUM_THREADS =           64
+  NUM MPI RANKS =            1
+  Enter file with s.p. orbit information (.spo/.sps)
+  Enter Z, N 
+  Enter number of Slater determinants 
+  Enter input filename (.sd)
+Title card: "Al39 sdpf min -169.461 0.165 59.750                         "
+  Enter input filename (.sd)
+Title card: "Al39 min sdpf TDA phonons                                   "
+  There are           20  Slater determinants in this file 
+  Enter a Slater determinant index (0 or -1 to stop )
+  To read from an ordered list, enter -999 
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Enter a Slater determinant index (0 or -1 to stop )
+  Node =            0  isd =            1
+  Node =            0  isd =            2
+  Node =            0  isd =            3
+  Node =            0  isd =            4
+  Node =            0  isd =            5
+  Node =            0  isd =            6
+  Node =            0  isd =            7
+  Node =            0  isd =            8
+  Node =            0  isd =            9
+  Node =            0  isd =           10
+  Node =            0  isd =           11
+  Node =            0  isd =           12
+  Node =            0  isd =           13
+  Node =            0  isd =           14
+  Node =            0  isd =           15
+  Node =            0  isd =           16
+  Node =            0  isd =           17
+  Node =            0  isd =           18
+  Node =            0  isd =           19
+  Node =            0  isd =           20
+  Node =            0  isd =           21
+ Enter J-max to project (half-integer value):
+  
+  Number of ANGLES in Euler mesh =        23328
+  Use only        11988  Euler angles out of        23328
+  sum rule    21.0012816938199     
+  SD overlap eigenvalues =   3.551230810725968E-003  3.202804300051752E-002
+  3.948367191879631E-002  0.125639489957250       0.455917047150691     
+  0.457593240269762       0.463574557956106       0.464774633576445     
+  0.484608268436646       0.496497783628716       0.516202674411433     
+  0.542212459662465       0.545121756470103       0.562597948931565     
+  0.583518698672917       0.594357131368169       0.607534202321165     
+  0.674716896922073       0.835863600394928       0.858540931252626     
+   11.6569474267068     
+  
+  Fraction in original HF state: Norm
+  
+    J    frac(+)   frac(-)
+ -------------------------
+   0.5  0.073244  0.080109
+   1.5  1.702227  0.200926
+   2.5  2.317478  0.398788
+   3.5  2.648880  0.544585
+   4.5  2.726495  0.638218
+   5.5  2.357803  0.545103
+   6.5  1.908243  0.421500
+   7.5  1.397339  0.298054
+   8.5  0.969638  0.191649
+   9.5  0.609168  0.112811
+  10.5  0.365318  0.060181
+  11.5  0.199458  0.029159
+  12.5  0.102402  0.012710
+  13.5  0.048732  0.004966
+  14.5  0.020839  0.001727
+  15.5  0.008657  0.000536
+  16.5  0.002971  0.000146
+  17.5  0.001182  0.000040
+  Total of sum of trace(N) =    21.0012816938199     
+ 
+  Choose one of the following: 
+  (e) Compute energies or similar operator ONLY
+  (d) 1-body densities (will compute energies first)
+  
+  Do you want to read in files in (i) isospin conserving format (old format) 
+  or (x) explicit proton-neutron (xpn) format?  (enter i/x)
+  Enter interaction file name (.smint/.int)
+  (Enter END to stop)
+  
+  AUTOSCALING two-body matrix elements
+  
+  Autoscale parameters    42.00000       63.00000      0.3000000    
+  0.8854675    
+  Enter interaction file name (.smint/.int)
+  (Enter END to stop)
+  about to decouple 
+  there are          496  uncoupled pairs 
+  there are          496  uncoupled pairs 
+  There are         7622  PP/NN uncoupled TBMEs 
+  decoupled 
+  There are        30964  PN matrix elements 
+  Enter the tolerance for accept Js (typically ~0.00001 to 0.0001)
+  
+  New Jmax =    17.50000              18
+  
+  NEW OPTION: 
+  Enter a maximum J for output (enter -1 to output all )
+  (Large values of J, especially for a large number of reference states, 
+   can take a long time to diagonalize/write out)
+  
+  Number of ANGLES in Euler mesh =        23328
+  Use only        11988  Euler angles out of        23328

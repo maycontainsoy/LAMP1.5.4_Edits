@@ -39,6 +39,7 @@ REAL(KIND=4) :: tolerance, elapsedTime, Jtolerance
 REAL(KIND=4) :: newJmax 
 REAL(KIND=8) :: clock_start, clock_stop 											! timing variables
 REAL(KIND=8) :: norm_start, norm_stop, ham_start, ham_stop 		! timing variables
+REAL(KIND=8) :: proj_start, proj_stop
 REAL(KIND=8) :: x 
 REAL(KIND=8) :: normSum, hamSum 
 
@@ -130,7 +131,12 @@ CASE('e','E') ! menu_char
 	doHam = .TRUE. 
 	CALL deallocator 			! LAMPutils.f90
 	CALL hmultMPIdistro		! LAMP_hamlib,f90 
+
+	! Added timing around Hamiltonian computation
+	IF (myMPIrank == root) CALL CPU_TIME(proj_start) 
 	CALL projectorator 		! LAMPmanagelib.f90
+	IF (myMPIrank == root) CALL CPU_TIME(proj_stop)
+
 	CALL tracemaster 			! LAMPoutput.f90 
 
 	IF (ychar == 'y' .OR. ychar == 'Y' .AND. myMPIrank == root) THEN 
@@ -258,6 +264,7 @@ CASE('e','E') ! menu_char
 		WRITE(*,*) '    TIME of total LAMP calculation: ', clock_stop - clock_start, ' seconds'
 		WRITE(*,*) '    TIME of norm calculation: ', norm_stop - norm_start, ' seconds'
 		WRITE(*,*) '    TIME of ham calculation: ', ham_stop - ham_start, ' seconds'
+		WRITE(*,*) '    TIME of projectorator calculation: ', proj_stop - proj_start, ' seconds'
 	END IF ! myMPIrank == root 
 
 CASE('d','D') ! menu_char

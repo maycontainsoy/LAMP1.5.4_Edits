@@ -1,0 +1,50 @@
+   WELCOME to LAMP
+   Version 1.5.4, Oct 2021
+   Authors: C. W. Johnson, S. M. Lauber, C. F. Jiao
+   based upon work by J. Staker and K. O Mara
+ 
+  NUM_THREADS =           64
+  NUM MPI RANKS =            1
+  Enter file with s.p. orbit information (.spo/.sps)
+  Enter Z, N 
+  Enter number of Slater determinants 
+  Enter input filename (.sd)
+  mismatch N: Old:           18 , new:           19
+  Exit (x) or choose another file (c)?
+  Enter input filename (.sd)
+  mismatch N: Old:           18 , new:           16
+  Exit (x) or choose another file (c)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  That file does not exist; do you wish to try another file (y/n)?
+  Enter input filename (.sd)
+  mismatch Z: Old:            7 , new:            3
+  Exit (x) or choose another file (c)?
+  Enter input filename (.sd)
+  mismatch Z: Old:            7 , new:            3
+  Exit (x) or choose another file (c)?

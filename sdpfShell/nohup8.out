@@ -1,0 +1,14 @@
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+libiomp5.so        00007F23E5CF9D4F  Unknown               Unknown  Unknown
+libiomp5.so        00007F23E5CF684E  Unknown               Unknown  Unknown
+libiomp5.so        00007F23E5CF5694  Unknown               Unknown  Unknown
+libiomp5.so        00007F23E5CF577D  Unknown               Unknown  Unknown
+libiomp5.so        00007F23E5CD6C5F  Unknown               Unknown  Unknown
+lamp-mpi.x         000000000043ED62  Unknown               Unknown  Unknown
+lamp-mpi.x         0000000000443D4E  Unknown               Unknown  Unknown
+lamp-mpi.x         0000000000457B40  Unknown               Unknown  Unknown
+lamp-mpi.x         000000000045C665  Unknown               Unknown  Unknown
+lamp-mpi.x         00000000004052DC  Unknown               Unknown  Unknown
+libc.so.6          00007F23E5919B25  Unknown               Unknown  Unknown
+lamp-mpi.x         00000000004051D9  Unknown               Unknown  Unknown

@@ -1,0 +1,9 @@
+forrtl: error (78): process killed (SIGTERM)
+Image              PC                Routine            Line        Source             
+lamp-mpi.x         000000000043E358  Unknown               Unknown  Unknown
+lamp-mpi.x         0000000000442C47  Unknown               Unknown  Unknown
+lamp-mpi.x         0000000000457B40  Unknown               Unknown  Unknown
+lamp-mpi.x         000000000045C665  Unknown               Unknown  Unknown
+lamp-mpi.x         00000000004052DC  Unknown               Unknown  Unknown
+libc.so.6          00007F4BD292AB25  Unknown               Unknown  Unknown
+lamp-mpi.x         00000000004051D9  Unknown               Unknown  Unknown
